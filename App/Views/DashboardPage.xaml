@@ -1,0 +1,81 @@
+﻿<Page
+    x:Class="App.Views.DashboardPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
+    mc:Ignorable="d">
+
+	<ScrollViewer Padding="0 0 8 0">
+		<Grid x:Name="ContentArea">
+			<!-- Phần trên -->
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+			</Grid.RowDefinitions>
+
+
+			<!-- Phần trên -->
+			<Grid Grid.Row="0">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="*"/>
+					<ColumnDefinition Width="*"/>
+					<ColumnDefinition Width="*"/>
+				</Grid.ColumnDefinitions>
+				
+			
+
+				<StackPanel Padding="16" Margin="0, 0, 34, 34"  BorderThickness="1" BorderBrush="Black" CornerRadius="8,8,8,8">
+					<TextBlock Text="Total Product" Style="{StaticResource BodyTextBlockStyle}" />
+					<TextBlock Text="{x:Bind ViewModel.TotalProduct}" Style="{StaticResource TitleLargeTextBlockStyle}" />
+				</StackPanel>
+                <StackPanel Grid.Column="1" Padding="16" Margin="0, 0, 34, 34" Background="Transparent" BorderThickness="1" BorderBrush="Black" CornerRadius="8,8,8,8">
+					<TextBlock Text="Total order in week" Style="{StaticResource BodyTextBlockStyle}" />
+					<TextBlock Text="{x:Bind ViewModel.TotalWeekOrder}" Style="{StaticResource TitleLargeTextBlockStyle}" />
+				</StackPanel>
+                <StackPanel Grid.Column="2" Padding="16" Margin="0, 0, 34, 34" Background="Transparent" BorderThickness="1" BorderBrush="Black" CornerRadius="8,8,8,8">
+					<TextBlock Text="Total order in month" Style="{StaticResource BodyTextBlockStyle}" />
+					<TextBlock Text="{x:Bind ViewModel.TotalMonthOrder}" Style="{StaticResource TitleLargeTextBlockStyle}" />
+				</StackPanel>
+
+			</Grid>
+
+
+
+			<!--<controls:ChartControl Grid.Row="1">
+        </controls:ChartControl>-->
+
+			<StackPanel Grid.Row="2" Padding="0 20 0 0 ">
+				<TextBlock Text="Top Five Out of Stock" Style="{StaticResource SubtitleTextBlockStyle}"/>
+
+				<Grid x:Name="TopFive">
+					<Grid.Resources>
+						<ResourceDictionary>
+							<SolidColorBrush x:Key="DataGridCellFocusVisualPrimaryBrush" Color="Transparent"/>
+							<SolidColorBrush x:Key="DataGridCellFocusVzisualSecondaryBrush" Color="Transparent"/>
+						</ResourceDictionary>
+					</Grid.Resources>
+
+					<controls:DataGrid
+                    IsReadOnly="True"
+                    AutoGenerateColumns="False"
+                    GridLinesVisibility="All"
+                    HorizontalGridLinesBrush="Black"
+                    ItemsSource="{x:Bind ViewModel.TopProductOutOfStock, Mode=OneWay}">
+
+						<controls:DataGrid.Columns>
+							<controls:DataGridTextColumn Binding="{Binding Id}" Header="ID"/>
+							<controls:DataGridTextColumn Binding="{Binding Name}" Header="Name" />
+							<controls:DataGridTextColumn Binding="{Binding SalePrice}" Header="Sale price" />
+							<controls:DataGridTextColumn Binding="{Binding ImportPrice}" Header="Import price" />
+							<controls:DataGridTextColumn Binding="{Binding Quantity}" Header="Quantity" />
+							<controls:DataGridTextColumn Binding="{Binding Category.Name}" Header="Category" Width="*"/>
+						</controls:DataGrid.Columns>
+					</controls:DataGrid>
+				</Grid>
+			</StackPanel>
+		</Grid>
+	</ScrollViewer>
+</Page>
