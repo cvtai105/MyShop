@@ -9,15 +9,7 @@ public interface IShopService
 {
     IProductService ProductService { get; }
 
-    ICustomerService CustomerService
-    {
-    get; }
+    ICustomerService CustomerService { get; }
 
-    ICategoryService CategoryService
-    {
-    get; }
-
-    IOrderService OrderService
-    {
-    get; }
+    IOrderService OrderService { get; }
 }

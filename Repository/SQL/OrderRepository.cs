@@ -2,6 +2,7 @@
 using Models;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -42,6 +43,11 @@ public class OrderRepository : IOrderRepository
             .ToListAsync();
     }
 
+    public Task<int> GetCurrentMonthOrderCount() => throw new NotImplementedException();
+    public Task<int> GetCurrentMonthOrderCountAsync() => throw new NotImplementedException();
+    public Task<int> GetCurrentWeekOrderCount() => throw new NotImplementedException();
+    public Task<int> GetCurrentWeekOrderCountAsync() => throw new NotImplementedException();
+
     public async Task<IEnumerable<OrderDetail>> GetDetailAsync(int orderId)
     {
         var order = await _db.Orders
@@ -51,15 +57,31 @@ public class OrderRepository : IOrderRepository
         return order?.OrderDetails ?? Enumerable.Empty<OrderDetail>();
     }
 
-    public async Task<IEnumerable<Order>> GetForCustomerAsync(int customerId)
+    public Task<IEnumerable<decimal>> GetIncomeByDay(int count) => throw new NotImplementedException();
+
+    public async Task<int> GetTotalMonthOrder()
     {
         return await _db.Orders
-            .Where(o => o.CustomerId == customerId)
-            .ToListAsync();
+            .Where(o => o.OrderPlaced.Month == DateTime.Now.Month)
+            .CountAsync();
     }
 
-    public async Task<int> GetTotalMonthOrder() => throw new NotImplementedException();
+    public async Task<int> GetTotalOrderCount(DateTime? startDate, DateTime? endDate)
+    {
+        var query = _db.Orders
+            .Where(od => (!startDate.HasValue || od.OrderPlaced >= startDate) &&
+                            (!endDate.HasValue || od.OrderPlaced <= endDate));
+        return await query.CountAsync();
+        ;
+    }
     public Task<int> GetTotalWeekOrder() => throw new NotImplementedException();
+    public async Task<IEnumerable<Order>> QueryOrderPage(DateTime? startDate, DateTime? endDate, int pageSize, int selectedPage)
+    {
+        var query = _db.Orders
+            .Where(o => (!startDate.HasValue || o.OrderPlaced >= startDate) && (!endDate.HasValue || o.OrderPlaced <= endDate));
+        var position = (selectedPage - 1) * pageSize;
+        return await query.OrderByDescending(o => o.OrderPlaced).Skip(position).Take(pageSize).Include(o => o.Customer).Include(o => o.OrderDetails).ToListAsync();
+    }
 
     public async Task<Order> UpsertAsync(Order order)
     {

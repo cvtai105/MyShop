@@ -4,26 +4,24 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Models;
+using Repository.Helpers;
 
 namespace BusinessLogic.Interfaces;
 
 public interface IProductService
 {
-    Task<IEnumerable<Product>> GetAllProductsAsync();
-
-    Task<Product> GetProductByIdAsync(int id);
-
-    Task<IEnumerable<Product>> GetProductsByNameAsync(string value);
-
-    Task<IEnumerable<Product>> GetProductsByCategoryAsync(int categoryId);
-
-    Task<int> GetTotalProductCountAsync();
-
+    IEnumerable<string> ProductSortTypes { get; }
+    Task<IEnumerable<Category>> GetCategories();
+    Task UpsertCategory(Category Category);
+    Task DeleteCategory(int CategoryId);
+    Task UpsertProduct(Product product);
+    Task DeleteProduct(int productId);
+    Task<IEnumerable<Product>> QueryProductPage(Category? c = null, string? name = null, decimal? lowPrice = null, decimal? highPrice = null, string? sort = "Id Asc", int? pageSize = 10, int? pageNumber = 1);
+    Task<int> GetTotalProductCountAsync(); 
+    Task<int> GetTotalProductCountAsync(Category? c = null, string? name = null, decimal? lowPrice = null, decimal? highPrice = null);
     Task<IEnumerable<Product>> GetTopRunningOutOfStockAsync(int topCount);
 
-    Task<Product> UpsertProductAsync(Product product);
-
-    Task DeleteProductAsync(int productId);
-
-    Task<IEnumerable<Product>> GetProductsByPriceRangeAsync(int floor, int ceil);
+    Task<IEnumerable<Product>> GetTopSellingProductsCurrentWeek();
+    Task<IEnumerable<Product>> GetTopSellingProductsCurrentMonth();
+    Task<IEnumerable<Product>> GetTopSellingProductsCurrentYear();
 }

@@ -21,16 +21,16 @@ public class ShopService : IShopService
         {
             dbOptionsBuilder = new DbContextOptionsBuilder<MyShopContext>()
             .UseSqlServer($"Server={server};Database={database};Trusted_Connection={isTrusted};");
-            Debug.WriteLine(1);
+            Debug.WriteLine("Connect By Trusted Connection");
         }
         else
         {
-            Debug.WriteLine(2);
             dbOptionsBuilder = new DbContextOptionsBuilder<MyShopContext>()
-            .UseSqlServer($"Server={server};Database={database};User Id={username};Password={password};Trusted_Connection={isTrusted};");
+            .UseSqlServer($"Server={server};Database={database};User Id={username};Password={password};"); /*Trusted_Connection={isTrusted};*/
+            Debug.WriteLine("Connect By Account");
         }
 
-        
+
 
         _shopRepository = new MyShopRepository(dbOptionsBuilder);
 
@@ -41,7 +41,5 @@ public class ShopService : IShopService
 
     public ICustomerService CustomerService => throw new NotImplementedException();
 
-    public ICategoryService CategoryService => new CategoryService(_shopRepository);
-
-    public IOrderService OrderService => throw new NotImplementedException();
+    public IOrderService OrderService => new OrderService(_shopRepository);
 }

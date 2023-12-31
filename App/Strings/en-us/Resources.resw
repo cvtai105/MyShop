@@ -127,7 +127,7 @@
     <value>Dashboard</value>
   </data>
   <data name="Shell_Product.Content" xml:space="preserve">
-    <value>Product</value>
+    <value>Category &amp; Product</value>
   </data>
   <data name="Shell_Order.Content" xml:space="preserve">
     <value>Order</value>

@@ -1,4 +1,6 @@
-﻿using Models;
+﻿using Microsoft.EntityFrameworkCore.Query.Internal;
+using Models;
+using Repository.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +11,8 @@ namespace Repository;
 
 public interface IProductRepository
 {
- 
+
+
     Task<IEnumerable<Product>> GetAsync();
 
     Task<Product> GetAsync(int id);
@@ -17,7 +20,6 @@ public interface IProductRepository
     Task<IEnumerable<Product>> GetAsync(string value);
 
     Task<IEnumerable<Product>> GetByCategoryAsync(int categoryid);
-
 
     Task<int> GetTotalCountAsync();
 
@@ -29,4 +31,7 @@ public interface IProductRepository
     Task DeleteAsync(int productId);
 
     Task<IEnumerable<Product>> GetByPriceAsync(int floor, int ceil);
+
+    Task<int> GetTotalProductCount(ProductFilterDefinition filterDefinition);
+    Task<IEnumerable<Product>> FilterProduct(ProductFilterDefinition filterDefinition); 
 }

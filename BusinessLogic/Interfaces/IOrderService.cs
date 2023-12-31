@@ -8,20 +8,21 @@ using Models;
 namespace BusinessLogic.Interfaces;
 public interface IOrderService
 {
-    Task<IEnumerable<Order>> GetAsync();
-
-
-    Task<IEnumerable<OrderDetail>> GetDetailAsync(int orderId);
-
-    Task<IEnumerable<Order>> GetByDateAsync(DateTime start, DateTime end);
-
-    Task<IEnumerable<Order>> GetForCustomerAsync(int customerId);
-
-    Task<int> GetTotalWeekOrder();
-
-    Task<int> GetTotalMonthOrder();
-
-    Task<Order> UpsertAsync(Order order);
-
+    Task<IEnumerable<Order>> GetAllAsync();
     Task DeleteAsync(int orderId);
+    Task<Order> UpsertAsync(Order order);
+    Task<int> GetCurrentWeekOrderCountAsync();
+    Task<int> GetCurrentMonthOrderCountAsync();
+    Task<IEnumerable<decimal>> GetIncomeByDay(int count);
+    Task<IEnumerable<decimal>> GetIncomeByWeek(int count);
+    Task<IEnumerable<decimal>> GetIncomeByMonth(int count);
+    Task<IEnumerable<decimal>> GetIncomeByYear(int count);
+    Task<decimal> GetProfitByDay(int count);
+    Task<decimal> GetProfitByWeek(int count);
+    Task<decimal> GetProfitByMonth(int count);
+    Task<decimal> GetProfitByYear(int count);
+    Task<int> GetQuantiyProductSaled(int productId);
+    Task<int> GetTotalOrderCount(DateTimeOffset? startDate, DateTimeOffset? endDate);
+    Task<IEnumerable<Order>> QueryOrderPage(DateTimeOffset? startDate, DateTimeOffset? endDate, int pageSize, int? selectedPage);
+    Task<IEnumerable<OrderDetail>> GetDetailAsync(int orderId);
 }

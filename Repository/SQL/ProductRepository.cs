@@ -1,5 +1,7 @@
 ﻿using Models;
 using Microsoft.EntityFrameworkCore;
+using Repository.Helpers;
+using System.Linq;
 
 namespace Repository.SQL;
 
@@ -88,5 +90,80 @@ public class ProductRepository : IProductRepository
         .ToListAsync();
 
         return productsRunningOutOfStock;
+    }
+
+    public async Task<IEnumerable<Product>> FilterProduct(ProductFilterDefinition filterDefinition)
+    {
+        var query = GenerateQueryByFilter(filterDefinition);
+
+        return await query.Include(p => p.Category).ToListAsync();
+    }
+
+    public async Task<int> GetTotalProductCount(ProductFilterDefinition filterDefinition)
+    {
+        var query = GenerateQueryByFilter(filterDefinition);
+        return await query.CountAsync();
+    }
+
+    private IQueryable<Product> GenerateQueryByFilter(ProductFilterDefinition filterDefinition)
+    {
+        var query = from s in _db.Products
+                        select s;
+        
+        //id = 0 means all categories
+        if (filterDefinition.CategoryId != 0)
+        {
+            query = query.Where(p => p.CategoryId == filterDefinition.CategoryId);
+        }
+        if(filterDefinition.Name != null && filterDefinition.Name != "")
+        {
+            query = query.Where(p => p.Name.Contains(filterDefinition.Name));
+        }
+        if(filterDefinition.LowSalePrice != null)
+        {
+            query = query.Where(p => p.SalePrice >= filterDefinition.LowSalePrice);
+        }
+        if(filterDefinition.HighSalePrice != null)
+        {
+            query = query.Where(p => p.SalePrice <= filterDefinition.HighSalePrice);
+        }
+       
+        switch(filterDefinition.SortOder)
+        {
+            case ProductSortingEnum.IdAsc:
+                query = query.OrderBy(p => p.Id);
+                break;
+            case ProductSortingEnum.IdDesc:
+                query = query.OrderByDescending(p => p.Id);
+                break;
+            case ProductSortingEnum.NameAsc:
+                query = query.OrderBy(p => p.Name);
+                break;
+            case ProductSortingEnum.NameDesc:
+                query = query.OrderByDescending(p => p.Name);
+                break;
+            case ProductSortingEnum.SalePriceAsc:
+                query = query.OrderBy(p => p.SalePrice);
+                break;
+            case ProductSortingEnum.SalePriceDesc:
+                query = query.OrderByDescending(p => p.SalePrice);
+                break;
+            case ProductSortingEnum.QuantityAsc:
+                query = query.OrderBy(p => p.Quantity);
+                break;
+            case ProductSortingEnum.QuantityDesc:
+                query = query.OrderByDescending(p => p.Quantity);
+                break;
+            default:
+                break;
+        }
+
+        if (filterDefinition.PageSize != null && filterDefinition.PageNumber != null)
+        {
+            var position = (int)((filterDefinition.PageNumber - 1) * filterDefinition.PageSize);
+            query = query.Skip(position).Take((int)filterDefinition.PageSize);
+        }
+
+        return query;
     }
 }

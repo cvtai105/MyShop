@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using BusinessLogic.Interfaces;
 using Models;
 using Repository;
+using Repository.Helpers;
 using Repository.SQL;
 
 namespace BusinessLogic.Services;
@@ -16,64 +17,83 @@ public class ProductService : IProductService
     {
         _repos = repos;
     }
+
+    public IEnumerable<string> ProductSortTypes => new List<string> { "Id Asc", "Id Desc", "Name Asc", "Name Desc", "Sale Price Asc", "Sale Price Desc", "Quantity Asc", "Quantity Desc" };
+
+    public async Task DeleteCategory(int CategoryId)
+    {
+        await _repos.Categories.DeleteAsync(CategoryId);
+    }
+    public async Task DeleteProduct(int productId)
+    {
+        await _repos.Products.DeleteAsync(productId);
+    }
+    public async Task<IEnumerable<Category>> GetCategories() {
+        var raw = await _repos.Categories.GetAsync();
     
-    public async Task<IEnumerable<Product>> GetAllProductsAsync()
+        var list = new List<Category> { new() {Id = 0, Name = "All" } };
+        list.AddRange(raw);
+        list.Add(new() {Id=null, Name = "NULL"});
+        return list;
+    }
+    public async Task<IEnumerable<Product>> GetTopRunningOutOfStockAsync(int topCount)
     {
-        return await _repos.Products.GetAsync();
+        return await _repos.Products.TopRunningOutOfStockAsync(topCount);
     }
 
-    public async Task<Product> GetProductByIdAsync(int id)
-    {
-        return await _repos.Products.GetAsync(id);
-    }
-
-    public async Task<IEnumerable<Product>> GetProductsByNameAsync(string value)
-    {
-        return await _repos.Products.GetAsync(value);
-    }
-
-    public async Task<IEnumerable<Product>> GetProductsByCategoryAsync(int categoryId)
-    {
-        return await _repos.Products.GetByCategoryAsync(categoryId);
-    }
+    public Task<IEnumerable<Product>> GetTopSellingProductsCurrentMonth() => throw new NotImplementedException();
+    public Task<IEnumerable<Product>> GetTopSellingProductsCurrentWeek() => throw new NotImplementedException();
+    public Task<IEnumerable<Product>> GetTopSellingProductsCurrentYear() => throw new NotImplementedException();
 
     public async Task<int> GetTotalProductCountAsync()
     {
         return await _repos.Products.GetTotalCountAsync();
     }
 
-    public async Task<IEnumerable<Product>> GetTopRunningOutOfStockAsync(int topCount)
+    public async Task<int> GetTotalProductCountAsync(Category? c = null, string? name = null, decimal? lowPrice = null, decimal? highPrice = null)
     {
-        return await _repos.Products.TopRunningOutOfStockAsync(topCount);
+        if (c == null)
+        {
+            return 0;
+        }
+        return await _repos.Products.GetTotalProductCount(new ProductFilterDefinition(ProductSortingEnum.IdAsc, c.Id, name, lowPrice, highPrice));
     }
 
-    public async Task<Product> UpsertProductAsync(Product product)
+    public async Task<IEnumerable<Product>> QueryProductPage(Category? c = null, string? name = null, decimal? lowSalePrice = null, decimal? highSalePrice = null, string? sort = "Id Asc", int? pageSize = 10, int? pageNumber = 1)
     {
-       
-        if (product == null)
-        {
-            throw new ArgumentNullException(nameof(product), "Product cannot be null");
+        if(c==null){ 
+            return new List<Product>();
         }
 
-        if (string.IsNullOrEmpty(product.Name))
+        var sortEnum = sort switch
         {
-            throw new ArgumentException("Product name cannot be empty", nameof(product.Name));
-        }
+            "Id Asc" => ProductSortingEnum.IdAsc,
+            "Id Desc" => ProductSortingEnum.IdDesc,
+            "Name Asc" => ProductSortingEnum.NameAsc,
+            "Name Desc" => ProductSortingEnum.NameDesc,
+            "Sale Price Asc" => ProductSortingEnum.SalePriceAsc,
+            "Sale Price Desc" => ProductSortingEnum.SalePriceDesc,
+            "Quantity Asc" => ProductSortingEnum.QuantityAsc,
+            "Quantity Desc" => ProductSortingEnum.QuantityDesc,
+            _ => ProductSortingEnum.IdAsc,
+        };
+        
+        pageSize ??= 10;
+        pageNumber ??= 1;
 
-        // You can add more validation as needed
+        var productFilterDefinition = new ProductFilterDefinition(sortEnum, c.Id, name, lowSalePrice, highSalePrice, pageSize, pageNumber);
 
-        return await _repos.Products.UpsertAsync(product);
+        return await _repos.Products.FilterProduct(productFilterDefinition);
     }
 
-    public async Task DeleteProductAsync(int productId)
+    public async Task UpsertCategory(Category Category)
     {
-        _ = await _repos.Products.GetAsync(productId) ?? throw new ArgumentException($"Product with ID {productId} not found.", nameof(productId));
-
-        await _repos.Products.DeleteAsync(productId);
+        //TODO: validate
+        await _repos.Categories.UpsertAsync(Category);
     }
-
-    public async Task<IEnumerable<Product>> GetProductsByPriceRangeAsync(int floor, int ceil)
+    public async Task UpsertProduct(Product product)
     {
-        return await _repos.Products.GetByPriceAsync(floor, ceil);
+        //TODO: validate
+        await _repos.Products.UpsertAsync(product);
     }
 }

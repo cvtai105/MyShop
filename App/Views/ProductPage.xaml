@@ -6,6 +6,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:Models"
     xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
+    xmlns:behaviors="using:App.Behaviors"
+    behaviors:NavigationViewHeaderBehavior.HeaderMode="Never"
     mc:Ignorable="d">
 
     <Grid x:Name="ContentArea">
@@ -22,7 +24,8 @@
 
                     <ListView x:Name="CategoryLink" Margin="0,12,0,0" SelectionMode="Single" Grid.Row="2" VerticalAlignment="Stretch"
                         IsItemClickEnabled="True"
-                        SelectionChanged="{x:Bind ViewModel.OnSelectionChanged}"
+                        SelectedItem="{x:Bind ViewModel.SelectedCategory, Mode=TwoWay}"
+                        SelectionChanged="OnCategorySelectionChanged"
                         ItemsSource="{x:Bind ViewModel.CategoryList}" >
                         <ListView.ItemTemplate>
                             <DataTemplate x:DataType="models:Category">
@@ -32,11 +35,11 @@
                     </ListView>
 
                     <StackPanel Grid.Row="0" Orientation="Horizontal">
-                        <AppBarButton Icon="Add" Label="Add"/>
+                        <AppBarButton Icon="Add" Name="CategoryAddButton" Label="Add" Command="{x:Bind ViewModel.CategoryAddCommand}" CommandParameter="{Binding ElementName=CategoryAddButton}"/>
                         <AppBarSeparator />
-                        <AppBarButton Icon="Edit" Label="Edit"/>
+                        <AppBarButton Icon="Edit" Name="CategoryEditButton" Label="Edit" Command="{x:Bind ViewModel.CategoryEditCommand}" CommandParameter="{Binding ElementName=CategoryEditButton}"/>
                         <AppBarSeparator />
-                        <AppBarButton Icon="Delete" Label="Delete"/>
+                        <AppBarButton Icon="Delete" Label="Delete" Command="{x:Bind ViewModel.CategoryDeleteCommand}" />
                     </StackPanel>
 
 
@@ -49,86 +52,111 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <Button Content="Search"  Margin="0 0 8 0" VerticalAlignment="Center" Command="{x:Bind ViewModel.SearchCommand}"/>
+                <StackPanel> 
+                    <StackPanel Orientation="Horizontal" Height="48">
 
-                        <AutoSuggestBox 
-                            PlaceholderText="Product Name"
+                        <TextBox 
+                            Text="{x:Bind ViewModel.SearchName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            PlaceholderText="Search by name"
+                            TextChanged="OnSearchNameChanged"
                             VerticalAlignment="Center"
-                            MinWidth="300"
-                            QueryIcon="Find"/>
-                        <!--QuerySubmitted="Control2_QuerySubmitted"
-                            SuggestionChosen="Control2_SuggestionChosen"/>-->
-                        
+                            MinWidth="300"/>
+
+                        <AppBarSeparator Margin="10 0 10 0"  />
+
+                        <TextBlock VerticalAlignment="Center" Margin="0 0 10 0">Filter By Sale Prices: </TextBlock>
+                        <NumberBox 
+                            Text="{x:Bind ViewModel.MinSalePrice, Mode=TwoWay}"
+                            PlaceholderText="Min sale price"
+                            Margin="0 0 10 0"
+                            VerticalAlignment="Center"
+                            ValueChanged="OnMinSalePriceChanged"
+                            MinWidth="100"/>
+                        <NumberBox 
+                            Text="{x:Bind ViewModel.MaxSalePrice, Mode=TwoWay}"
+                            PlaceholderText="Max sale price"
+                            VerticalAlignment="Center"
+                            ValueChanged="OnMaxSalePriceChanged"
+                            MinWidth="100"/>                
+
+
                         <AppBarSeparator Margin="10 0 10 0"/>
 
-                        <AppBarButton Icon="Add" Label="Add"/>
-                        <AppBarButton Icon="Edit" Label="Edit"/>
-                        <AppBarButton Icon="Delete" Label="Delete"/>
+                        <TextBlock Text="Total product: " Margin="0 0 8 0" VerticalAlignment="Center"/>
+                        <TextBlock VerticalAlignment="Center" Text="{x:Bind ViewModel.TotalProductCount, Mode=OneWay}"/>
+
                     </StackPanel>
 
-                        <StackPanel Orientation="Horizontal" Margin="0 10 0 10">
+                    <StackPanel Orientation="Horizontal" Margin="0 10 0 10" Height="48">
 
-                        <TextBlock Text="No.Item per page: " TextTrimming="None" VerticalAlignment="Center"/>
-                        <NumberBox x:Name="NumberBoxSpinButtonPlacementExample"
-                        Value="10"
-                        VerticalAlignment="Center"
-                        SpinButtonPlacementMode="Hidden"
-                        SmallChange="5"
-                        LargeChange="20" />
+                        <TextBlock Text="No.Item per page: " VerticalAlignment="Center"/>
+                        <NumberBox 
+                            Value="{x:Bind ViewModel.PageSize, Mode=TwoWay}" Margin="8 0 0 0"
+                            VerticalAlignment="Center"
+                            SpinButtonPlacementMode="Hidden"
+                            ValueChanged="OnPageSizeChanged"
+                            SmallChange="5"
+                            LargeChange="20" />
 
 
                         <AppBarSeparator Margin="10 0 10 0"/>
 
                         <StackPanel x:Name="Pager" Orientation="Horizontal" >
-                            <Button Background="Transparent" Content="	&lt;" VerticalAlignment="Center"/>
+                            <Button Background="Transparent" Content="	&lt;" VerticalAlignment="Center" Command="{x:Bind ViewModel.PreviousPageClickCommand}"/>
+                            
                             <TextBlock Text="Page" Margin="8 0 8 0" VerticalAlignment="Center"/>
-                            <ComboBox Margin="0 0 8 0" ItemsSource="{Binding ProductPageIndex}"  VerticalAlignment="Center"/>
-                            <!--TextSubmitted="Combo3_TextSubmitted"-->
+                            <ComboBox Margin="0 0 8 0" ItemsSource="{x:Bind ViewModel.ProductPageNumberList}" 
+                                      SelectedItem="{x:Bind ViewModel.SelectedPage, Mode=TwoWay}"
+                                      SelectionChanged="OnPageChanged"
+                                      VerticalAlignment="Center"/>
                             <TextBlock Margin="0 0 8 0" Text="of" VerticalAlignment="Center"/>
-                            <TextBlock Margin="0 0 8 0" Text="{x:Bind ViewModel.ProductPageIndex.Count}" VerticalAlignment="Center"/>
-                            <Button Background="Transparent" Content="&gt;" VerticalAlignment="Center"/>
+                            <TextBlock Margin="0 0 8 0" Text="{x:Bind ViewModel.TotalPageCount, Mode=OneWay}"   VerticalAlignment="Center"/>
+
+                            <Button Background="Transparent" Content="&gt;" VerticalAlignment="Center" Command="{x:Bind ViewModel.NextPageClickCommand}"/>
 
                         </StackPanel>
 
                         <AppBarSeparator Margin="10 0 10 0"/>
 
-                        <Button Content="Filter">
+                        <Button>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Margin="0 0 5 0">Sort</TextBlock>
+                                <FontIcon Glyph="&#xE70D;" FontSize="7"/>
+                            </StackPanel>
                             <Button.Flyout>
                                 <Flyout>
-                                    <StackPanel>
-                                        <TextBlock Text="Sale Price Filter"/>
-                                        <NumberBox Header="floor" />
-                                        <NumberBox Header="ceiling" />
-                                    </StackPanel>
+                                    <ListView 
+                                        ItemsSource="{x:Bind ViewModel.SortOrderTypeList}"
+                                        SelectionChanged="OnSortSelectionChanged"
+                                        SelectedItem="{x:Bind ViewModel.SelectedSortOrderType, Mode=TwoWay}">
+                                    </ListView>
                                 </Flyout>
                             </Button.Flyout>
                         </Button>
-                        <DropDownButton Content="Sort By" Margin="10 0 0 0">
-                            <DropDownButton.Flyout>
-                                <MenuFlyout Placement="Bottom">
-                                    <MenuFlyoutItem Text="Name"/>
-                                    <MenuFlyoutItem Text="Sale Price"/>
-                                    <MenuFlyoutItem Text="Quantity"/>
-                                </MenuFlyout>
-                            </DropDownButton.Flyout>
-                        </DropDownButton>
 
-                        
+                        <AppBarSeparator Margin="10 0 10 0"/>
+
+                        <StackPanel Grid.Row="0" Orientation="Horizontal">
+                            <AppBarButton Icon="Add" Name="ProductAddButton" Command="{x:Bind ViewModel.ProductAddCommand}" CommandParameter="{Binding ElementName=ProductAddButton}"/>
+                            <AppBarSeparator />
+                            <AppBarButton Icon="Edit" Name="ProductEditButton"  Command="{x:Bind ViewModel.ProductEditCommand}" CommandParameter="{Binding ElementName=ProductEditButton}"/>
+                            <AppBarSeparator />
+                            <AppBarButton Icon="Delete"  Command="{x:Bind ViewModel.ProductDeleteCommand}" />
+                        </StackPanel>
                     </StackPanel>
                 </StackPanel>
 
+                <ScrollViewer Grid.Row="1" Height="Auto" VerticalScrollMode="Enabled">
+                    
                 <controls:DataGrid
                     x:Name="ProductsData"
                     IsReadOnly="True"
-                    Grid.Row="1"
+                    SelectedItem="{x:Bind ViewModel.SelectedProduct, Mode=TwoWay}"
                     AutoGenerateColumns="False"
                     GridLinesVisibility="All"
                     HorizontalGridLinesBrush="Black"
                     ItemsSource="{x:Bind ViewModel.ProductList}">
-
-                    <controls:DataGrid.Columns >
+                    <controls:DataGrid.Columns>
                         <controls:DataGridTextColumn Binding="{Binding Id}" Header="ID" />
                         <controls:DataGridTextColumn Binding="{Binding Name}" Header="Name" />
                         <controls:DataGridTextColumn Binding="{Binding SalePrice}" Header="Sale price" />
@@ -137,6 +165,8 @@
                         <controls:DataGridTextColumn Binding="{Binding Category.Name}" Header="Category" Width="*"/>
                     </controls:DataGrid.Columns>
                 </controls:DataGrid>
+                </ScrollViewer>
+
             </Grid>
             
         </SplitView>

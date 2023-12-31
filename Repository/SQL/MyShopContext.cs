@@ -54,7 +54,7 @@ public partial class MyShopContext : DbContext
             entity.HasOne(d => d.Order)
                 .WithMany(p => p.OrderDetails)
                 .HasForeignKey(d => d.OrderId)
-                .OnDelete(DeleteBehavior.SetNull);
+                .OnDelete(DeleteBehavior.Cascade);
 
             entity.HasOne(d => d.Product)
                 .WithMany(p => p.OrderDetails)

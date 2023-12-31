@@ -23,5 +23,7 @@ public partial class Customer
 
     [InverseProperty("Customer")]
     public virtual ICollection<Order> Orders { get; set; }
+
+    public string FullName => $"{FirstName} {LastName}";
 }
 

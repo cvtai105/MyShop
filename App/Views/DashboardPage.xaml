@@ -29,7 +29,7 @@
 
 				<StackPanel Padding="16" Margin="0, 0, 34, 34"  BorderThickness="1" BorderBrush="Black" CornerRadius="8,8,8,8">
 					<TextBlock Text="Total Product" Style="{StaticResource BodyTextBlockStyle}" />
-					<TextBlock Text="{x:Bind ViewModel.TotalProduct}" Style="{StaticResource TitleLargeTextBlockStyle}" />
+                    <TextBlock Text="{x:Bind ViewModel.TotalProduct }" Style="{StaticResource TitleLargeTextBlockStyle}" />
 				</StackPanel>
                 <StackPanel Grid.Column="1" Padding="16" Margin="0, 0, 34, 34" Background="Transparent" BorderThickness="1" BorderBrush="Black" CornerRadius="8,8,8,8">
 					<TextBlock Text="Total order in week" Style="{StaticResource BodyTextBlockStyle}" />
