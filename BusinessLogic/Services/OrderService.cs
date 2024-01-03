@@ -7,6 +7,34 @@ namespace BusinessLogic.Services;
 public class OrderService : IOrderService
 {
     private readonly IMyShopRepository _repos;
+
+    public async Task UpsertOrder(Order order)
+    {
+
+        if (order.CustomerId == -1)
+        {
+            order.CustomerId = null;
+        }
+
+        var newOrder = await _repos.Orders.UpsertAsync(order);
+        Debug.WriteLine($"orderId: {newOrder.Id}");
+
+
+        //TODO: convert to ForEachAsync
+        foreach (var item in order.OrderDetails)
+        {
+            var item2 = item.Clone();
+            item2.OrderId = newOrder.Id;
+            try
+            {
+                await _repos.OrderDetails.InsertAsync(item2);
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e.InnerException);
+            }
+        }
+    }
     public OrderService(IMyShopRepository repos)
     {
         _repos = repos;
@@ -25,17 +53,18 @@ public class OrderService : IOrderService
         return await _repos.Orders.GetByDateAsync(start, end);
     }
 
+
     public async Task<int> GetCurrentWeekOrderCountAsync()
     {
-        return await _repos.Orders.GetCurrentWeekOrderCountAsync();
+        return await _repos.Orders.GetCurrentWeekOrderCount();
     }
     public async Task<int> GetCurrentMonthOrderCountAsync()
     { 
-        return await _repos.Orders.GetCurrentMonthOrderCountAsync();
+        return await _repos.Orders.GetCurrentMonthOrderCount();
     }
-    public async Task<IEnumerable<OrderDetail>> GetDetailAsync(int orderId)
+    public async Task<IEnumerable<OrderDetail>> GetOrderDetails(int orderId)
     {
-        return await _repos.Orders.GetDetailAsync(orderId);
+        return await _repos.OrderDetails.GetByOrderAsync(orderId);
     }
     public async Task<IEnumerable<decimal>> GetIncomeByDay(int count)
     {
@@ -94,5 +123,4 @@ public class OrderService : IOrderService
         }
         return await _repos.Orders.QueryOrderPage(p1, p2, pageSize, (int)selectedPage);
     }
-    public Task<Order> UpsertAsync(Order order) => throw new NotImplementedException();
 }

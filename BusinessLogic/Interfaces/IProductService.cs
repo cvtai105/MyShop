@@ -24,4 +24,6 @@ public interface IProductService
     Task<IEnumerable<Product>> GetTopSellingProductsCurrentWeek();
     Task<IEnumerable<Product>> GetTopSellingProductsCurrentMonth();
     Task<IEnumerable<Product>> GetTopSellingProductsCurrentYear();
+    Task<IEnumerable<Product>> Search(string? search);
+    Task<IEnumerable<Product>> GetAll();
 }

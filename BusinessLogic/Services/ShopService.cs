@@ -12,7 +12,7 @@ using Repository.SQL;
 namespace BusinessLogic.Services;
 public class ShopService : IShopService
 {
-    readonly IMyShopRepository _shopRepository;
+    private readonly IMyShopRepository _shopRepository;
 
     public ShopService(string server, string database, string? username, string? password, bool isTrusted)
     {
@@ -39,7 +39,7 @@ public class ShopService : IShopService
     //TODO: consider pass _shopRepository by reference in following initialization
     public IProductService ProductService => new ProductService(_shopRepository);
 
-    public ICustomerService CustomerService => throw new NotImplementedException();
+    public ICustomerService CustomerService => new CustomerSevice(_shopRepository);
 
     public IOrderService OrderService => new OrderService(_shopRepository);
 }

@@ -35,6 +35,11 @@ public class OrderRepository : IOrderRepository
             .ToListAsync();
     }
 
+    public async Task<Order?> GetAsync(int id)
+    {
+        return await _db.Orders.FirstOrDefaultAsync(o => o.Id == id);
+    }
+
     public async Task<IEnumerable<Order>> GetByDateAsync(DateTime start, DateTime end)
     {
         return await _db.Orders
@@ -43,18 +48,18 @@ public class OrderRepository : IOrderRepository
             .ToListAsync();
     }
 
-    public Task<int> GetCurrentMonthOrderCount() => throw new NotImplementedException();
-    public Task<int> GetCurrentMonthOrderCountAsync() => throw new NotImplementedException();
-    public Task<int> GetCurrentWeekOrderCount() => throw new NotImplementedException();
-    public Task<int> GetCurrentWeekOrderCountAsync() => throw new NotImplementedException();
-
-    public async Task<IEnumerable<OrderDetail>> GetDetailAsync(int orderId)
+    public async Task<int> GetCurrentMonthOrderCount()
     {
-        var order = await _db.Orders
-            //.Include(o => o.OrderDetails)
-            .FirstOrDefaultAsync(o => o.Id == orderId);
+        //call stored procedure
+        return await _db.Orders
+            .Where(o => o.OrderPlaced.Month == DateTime.Now.Month)
+            .CountAsync();
+    }
 
-        return order?.OrderDetails ?? Enumerable.Empty<OrderDetail>();
+    public async Task<int> GetCurrentWeekOrderCount()
+    {
+        DateTime startWeek = DateTime.Today.AddDays(-1 * (int)(DateTime.Today.DayOfWeek));
+        return await _db.Orders.Where(o => o.OrderPlaced >= startWeek).CountAsync();
     }
 
     public Task<IEnumerable<decimal>> GetIncomeByDay(int count) => throw new NotImplementedException();
@@ -72,17 +77,20 @@ public class OrderRepository : IOrderRepository
             .Where(od => (!startDate.HasValue || od.OrderPlaced >= startDate) &&
                             (!endDate.HasValue || od.OrderPlaced <= endDate));
         return await query.CountAsync();
-        ;
     }
     public Task<int> GetTotalWeekOrder() => throw new NotImplementedException();
+
     public async Task<IEnumerable<Order>> QueryOrderPage(DateTime? startDate, DateTime? endDate, int pageSize, int selectedPage)
     {
         var query = _db.Orders
             .Where(o => (!startDate.HasValue || o.OrderPlaced >= startDate) && (!endDate.HasValue || o.OrderPlaced <= endDate));
         var position = (selectedPage - 1) * pageSize;
-        return await query.OrderByDescending(o => o.OrderPlaced).Skip(position).Take(pageSize).Include(o => o.Customer).Include(o => o.OrderDetails).ToListAsync();
+        return await query.OrderByDescending(o => o.OrderPlaced).Skip(position).Take(pageSize).Include(o => o.Customer).Include(o=>o.OrderDetails).ToListAsync();
     }
 
+  
+
+    //TODO: use transaction to ensure data integrity
     public async Task<Order> UpsertAsync(Order order)
     {
         if (order == null)
@@ -92,20 +100,18 @@ public class OrderRepository : IOrderRepository
 
         var existingOrder = await _db.Orders.FindAsync(order.Id);
 
-        if (existingOrder == null)
+        if (existingOrder != null)
         {
-            // Insert new order
-            _db.Orders.Add(order);
-        }
-        else
-        {
-            // Update existing order
-            _db.Entry(existingOrder).CurrentValues.SetValues(order);
-        }
 
+            //delete and re-insert order
+            _db.Orders.Remove(existingOrder); //delete cascade was defined in database
+            await _db.SaveChangesAsync();
+            
+        }
+        _db.Orders.Add(order.Clone());
         await _db.SaveChangesAsync();
 
-        return order;
+        return _db.Orders.FirstOrDefault(o => o.CustomerId == order.CustomerId && o.OrderPlaced == order.OrderPlaced);
     }
 
 }

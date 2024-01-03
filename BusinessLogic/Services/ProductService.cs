@@ -28,6 +28,12 @@ public class ProductService : IProductService
     {
         await _repos.Products.DeleteAsync(productId);
     }
+
+    public async Task<IEnumerable<Product>> GetAll()
+    {
+        return await _repos.Products.GetAsync();
+    }
+
     public async Task<IEnumerable<Category>> GetCategories() {
         var raw = await _repos.Categories.GetAsync();
     
@@ -84,6 +90,15 @@ public class ProductService : IProductService
         var productFilterDefinition = new ProductFilterDefinition(sortEnum, c.Id, name, lowSalePrice, highSalePrice, pageSize, pageNumber);
 
         return await _repos.Products.FilterProduct(productFilterDefinition);
+    }
+
+    public async Task<IEnumerable<Product>> Search(string? search)
+    {
+        if(search == null)
+        {
+            return await _repos.Products.GetAsync();
+        }
+        return await _repos.Products.GetAsync(search);
     }
 
     public async Task UpsertCategory(Category Category)

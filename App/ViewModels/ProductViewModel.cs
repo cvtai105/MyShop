@@ -209,19 +209,26 @@ public partial class ProductViewModel : ObservableRecipient, INavigationAware
     [RelayCommand(CanExecute = nameof(CanDeleteCategory))]
     private async void CategoryDelete()
     {
+#pragma warning disable CS8629 // CanExecute is already checked
+#pragma warning disable CS8602 // CanExecute is already checked
         var catId = (int)SelectedCategory.Id;
+#pragma warning restore CS8602 
+#pragma warning restore CS8629 
         SelectedCategory = null;
         await _shopService.ProductService.DeleteCategory(catId);
         await SyncCategoris();
+        SelectedCategory = CategoryList.Last(); //NULL category
     }
     [RelayCommand(CanExecute = nameof(CanEditCategory))]
     private async void CategoryEdit(AppBarButton invoke)
     {
+#pragma warning disable CS8604 // Possible null reference argument.
         var dialog = new CategoryEditDialog(SelectedCategory)
         {
             XamlRoot = invoke.XamlRoot, //required to fix bug
             Title = "Edit Category"
         };
+#pragma warning restore CS8604 // Possible null reference argument.
         var result = await dialog.ShowAsync();
         if (result == ContentDialogResult.Primary)
         {

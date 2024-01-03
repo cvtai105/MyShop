@@ -74,7 +74,6 @@ public partial class MyShopContext : DbContext
                 .WithMany(p => p.Products)
                 .HasForeignKey(d => d.CategoryId)
                 .OnDelete(DeleteBehavior.SetNull);
-
         });
 
         OnModelCreatingPartial(modelBuilder);

@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Models;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,13 +34,14 @@ public class OrderDetailRepository : IOrderDetailRepository
     public async Task<IEnumerable<OrderDetail>> GetByOrderAsync(int orderId)
     {
         return await _db.OrderDetails
-            .Where(o => o.OrderId == orderId)
+            .Where(o => o.OrderId == orderId).Include(o => o.Product)
             .ToListAsync();
     }
 
     public async Task<OrderDetail?> GetAsync(int id)
     {
-        return await _db.OrderDetails.FindAsync(id);
+        return await _db.OrderDetails.Include(o => o.Product)
+            .FirstOrDefaultAsync(o => o.Id == id);
     }
 
     public async Task<OrderDetail> UpsertAsync(OrderDetail record)
@@ -52,7 +55,8 @@ public class OrderDetailRepository : IOrderDetailRepository
 
         if (existingOrderDetail == null)
         {
-            _db.OrderDetails.Add(record);
+            Debug.WriteLine(record);
+            _db.OrderDetails.Add(record); //??
         }
         else
         {
@@ -63,4 +67,28 @@ public class OrderDetailRepository : IOrderDetailRepository
 
         return record;
     }
+
+    public Task DeleteByOrder(int orderId) => throw new NotImplementedException();
+    public async Task InsertAsync(OrderDetail orderDetail)
+    {
+        await _db.OrderDetails.AddAsync(orderDetail);
+
+        await _db.SaveChangesAsync();
+        Debug.WriteLine("OrderDetail added");
+    }
+
+    public Task<IEnumerable<DayIncome>> GetDayIncomes() => throw new NotImplementedException();
+    public Task<IEnumerable<WeekIncome>> GetWeekIncomes() => throw new NotImplementedException();
+    public Task<IEnumerable<MonthIncome>> GetMonthIncomes() => throw new NotImplementedException();
+    public Task<IEnumerable<YearIncome>> GetYearIncomes() => throw new NotImplementedException();
+    public Task<IEnumerable<ProductDaySelledCount>> GetDaySelledCounts(int productId) => throw new NotImplementedException();
+    public Task<IEnumerable<ProductWeekSelledCount>> GetWeekSelledCounts(int productId) => throw new NotImplementedException();
+    public Task<IEnumerable<ProductMonthSelledCount>> GetMonthSelledCounts(int productId) => throw new NotImplementedException();
+    public Task<IEnumerable<ProductYearSelledCount>> GetYearSelledCounts(int productId) => throw new NotImplementedException();
+    public Task<IEnumerable<ThisWeekProductSelledCount>> GetTopSellingProductsThisWeek(int count)
+    {
+        return _db.Database.("exec GetTopSellingProductsCurrentWeek").ToListAsync();
+    }
+    public Task<IEnumerable<ThisMonthProductSelledCount>> GetTopSellingProductsThisMonth(int count) => throw new NotImplementedException();
+    public Task<IEnumerable<ThisYearProductSelledCount>> GetTopSellingProductsThisYear(int count) => throw new NotImplementedException();
 }

@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Repository.Helpers;
 using System.Linq;
+using System.Diagnostics;
 
 namespace Repository.SQL;
 
@@ -34,7 +35,7 @@ public class ProductRepository : IProductRepository
     public async Task<IEnumerable<Product>> GetAsync(string value)
     {
         return await _db.Products
-        .Where(p => p.Name.Contains(value, StringComparison.OrdinalIgnoreCase)).Include(p => p.Category)
+        .Where(p => p.Name.Contains(value)).Include(p => p.Category)
         .ToListAsync();
     }
 
@@ -54,7 +55,7 @@ public class ProductRepository : IProductRepository
     public async Task<Product> UpsertAsync(Product product)
     {
         var existingProduct = await _db.Products.FirstOrDefaultAsync(p => p.Id == product.Id);
-
+        Debug.WriteLine($"product id: {product.Id}");
         if (existingProduct == null)
         {
             _db.Products.Add(product);

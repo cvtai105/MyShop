@@ -69,7 +69,8 @@ public partial class App : Application
                 //var someDependency = provider.GetRequiredService<ISomeDependency>();
 
                 // Create an instance of ShopService with the desired arguments.
-                return new ShopService("(localdb)\\MSSQLLocalDB", "MyShop", null, null, true);
+                //TODO: Replace with your own shop service.
+                return new ShopService("MSI", "MyShop", null, null, true);
             });
 
             // Core Services
@@ -81,9 +82,10 @@ public partial class App : Application
             services.AddTransient<ProductViewModel>();
             services.AddTransient<ProductPage>();
             services.AddTransient<DashboardViewModel>();
-            services.AddTransient<DashboardPage>();
+            services.AddTransient<DashboardPage>(); 
             services.AddTransient<ShellPage>();
             services.AddTransient<ShellViewModel>();
+            services.AddTransient<OrderEditViewModel>();
 
             // Configuration
 

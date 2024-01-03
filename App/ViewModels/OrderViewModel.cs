@@ -15,7 +15,8 @@ public partial class OrderViewModel : ObservableRecipient, INavigationAware
 {
     private readonly IShopService _shopService;
 
-    public ObservableCollection<Order> OrderList { get; } = new ObservableCollection<Order>();
+    public ObservableCollection<Order> OrderList { get; } = new();
+    public ObservableCollection<OrderDetail> OrderDetailList { get; } = new();
     [NotifyCanExecuteChangedFor(nameof(OrderDeleteCommand))]
     [NotifyCanExecuteChangedFor(nameof(OrderEditCommand))]
     [ObservableProperty] 
@@ -24,9 +25,12 @@ public partial class OrderViewModel : ObservableRecipient, INavigationAware
     //[ObservableProperty] private DateTime? startDate;
     //[ObservableProperty] private DateTime? endDate;
     //[ObservableProperty] private int pageSize = 10;
+    
 
+    //TODO: Use DateConverter and remove these 2 property
     public DateTimeOffset? StartDate { get; set; }
     public DateTimeOffset? EndDate { get; set; }
+
     public int PageSize { get; set; } = 10;
 
 
@@ -45,7 +49,7 @@ public partial class OrderViewModel : ObservableRecipient, INavigationAware
     public ObservableCollection<int> OrderPageNumberList { get; } = new();
  
 
-    public async void OnNavigatedTo(object parameter)
+    public  void OnNavigatedTo(object parameter)
     {
     }
 
@@ -53,13 +57,26 @@ public partial class OrderViewModel : ObservableRecipient, INavigationAware
     public async Task SyncOrders()
     {
         SelectedOrder = null;
-        OrderList.Clear();
         var data = await _shopService.OrderService.QueryOrderPage(StartDate, EndDate, PageSize, SelectedPage);
+        OrderList.Clear();
         foreach (var o in data)
         {
             OrderList.Add(o);
         }
+    }
 
+    public async Task SyncOrderDetailList()
+    {
+        if(SelectedOrder == null)
+        {
+            return;
+        }
+        var data = await _shopService.OrderService.GetOrderDetails(SelectedOrder.Id);
+        OrderDetailList.Clear();
+        foreach (var o in data)
+        {
+            OrderDetailList.Add(o);
+        }
     }
 
     public async Task GetPageListAsync()
@@ -91,18 +108,15 @@ public partial class OrderViewModel : ObservableRecipient, INavigationAware
         SelectedPage++;
     }
 
-    [RelayCommand]
-    private async void OrderAdd(AppBarButton invoker)
-    {
-    }
-
     [RelayCommand(CanExecute = nameof(CanDeleteOrder))]
     private async void OrderDelete()
     {
+        await _shopService.OrderService.DeleteAsync(SelectedOrder!.Id);
+        await GetPageListAsync();
     }
 
     [RelayCommand(CanExecute = nameof(CanEditOrder))]
-    private async void OrderEdit(AppBarButton invoker)
+    private void OrderEdit(AppBarButton invoker)
     {
     }
     private bool CanDeleteOrder()

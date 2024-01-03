@@ -17,4 +17,22 @@ public interface IOrderDetailRepository
     Task<OrderDetail> UpsertAsync(OrderDetail record);
 
     Task DeleteAsync(int id);
+
+    Task DeleteByOrder(int orderId);
+
+    Task InsertAsync(OrderDetail orderDetail);
+
+    Task<IEnumerable<DayIncome>> GetDayIncomes();
+    Task<IEnumerable<WeekIncome>> GetWeekIncomes();
+    Task<IEnumerable<MonthIncome>> GetMonthIncomes();
+    Task<IEnumerable<YearIncome>> GetYearIncomes();
+
+    Task<IEnumerable<ProductDaySelledCount>> GetDaySelledCounts(int productId);
+    Task<IEnumerable<ProductWeekSelledCount>> GetWeekSelledCounts(int productId);
+    Task<IEnumerable<ProductMonthSelledCount>> GetMonthSelledCounts(int productId);
+    Task<IEnumerable<ProductYearSelledCount>> GetYearSelledCounts(int productId);
+
+    Task<IEnumerable<ThisWeekProductSelledCount>> GetTopSellingProductsThisWeek(int count);
+    Task<IEnumerable<ThisMonthProductSelledCount>> GetTopSellingProductsThisMonth(int count);
+    Task<IEnumerable<ThisYearProductSelledCount>> GetTopSellingProductsThisYear(int count);
 }
