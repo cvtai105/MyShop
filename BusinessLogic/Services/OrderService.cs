@@ -48,12 +48,6 @@ public class OrderService : IOrderService
     {
         return await _repos.Orders.GetAsync();
     }
-    public async Task<IEnumerable<Order>> GetByDateAsync(DateTime start, DateTime end)
-    {
-        return await _repos.Orders.GetByDateAsync(start, end);
-    }
-
-
     public async Task<int> GetCurrentWeekOrderCountAsync()
     {
         return await _repos.Orders.GetCurrentWeekOrderCount();
@@ -122,5 +116,18 @@ public class OrderService : IOrderService
             p2 = endDate.Value.DateTime;
         }
         return await _repos.Orders.QueryOrderPage(p1, p2, pageSize, (int)selectedPage);
+    }
+
+    public async Task<IEnumerable<ProductSelledCount>> GetThisWeekProductSelledCountAsync()
+    {
+        return  await _repos.OrderDetails.GetTopSellingProductsThisWeek(3);
+    }
+    public async Task<IEnumerable<ProductSelledCount>> GetThisYearProductSelledCountAsync()
+    {
+        return await _repos.OrderDetails.GetTopSellingProductsThisYear(3);
+    }
+    public async Task<IEnumerable<ProductSelledCount>> GetThisMonthProductSelledCountAsync()
+    {
+        return await _repos.OrderDetails.GetTopSellingProductsThisMonth(3);
     }
 }

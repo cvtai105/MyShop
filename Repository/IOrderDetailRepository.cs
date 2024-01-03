@@ -32,7 +32,7 @@ public interface IOrderDetailRepository
     Task<IEnumerable<ProductMonthSelledCount>> GetMonthSelledCounts(int productId);
     Task<IEnumerable<ProductYearSelledCount>> GetYearSelledCounts(int productId);
 
-    Task<IEnumerable<ThisWeekProductSelledCount>> GetTopSellingProductsThisWeek(int count);
-    Task<IEnumerable<ThisMonthProductSelledCount>> GetTopSellingProductsThisMonth(int count);
-    Task<IEnumerable<ThisYearProductSelledCount>> GetTopSellingProductsThisYear(int count);
+    Task<IEnumerable<ProductSelledCount>> GetTopSellingProductsThisWeek(int count);
+    Task<IEnumerable<ProductSelledCount>> GetTopSellingProductsThisMonth(int count);
+    Task<IEnumerable<ProductSelledCount>> GetTopSellingProductsThisYear(int count);
 }

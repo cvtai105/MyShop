@@ -31,23 +31,14 @@ public class ProductYearSelledCount
     public int SelledCount { get; set; }
 }
 
-public class ThisWeekProductSelledCount
+public class ProductSelledCount
 {
     public int ProductId { get; set; }
     public string Name { get; set; } = null!;
     public int TotalQuantitySold { get; set; }
-}
-
-public class ThisMonthProductSelledCount
-{
-    public int ProductId { get; set; }
-    public string Name { get; set; } = null!;
-    public int TotalQuantitySold { get; set; }
-}
-
-public class ThisYearProductSelledCount
-{
-    public int ProductId { get; set; }
-    public string Name { get; set; } = null!;
-    public int TotalQuantitySold { get; set; }
+    
+    public override string ToString()
+    {
+        return $"ProductId: {ProductId}, Name: {Name}, TotalQuantitySold: {TotalQuantitySold}";
+    }
 }

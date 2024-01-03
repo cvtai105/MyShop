@@ -17,4 +17,6 @@ public interface IMyShopRepository
     IOrderRepository Orders { get; }
 
     IOrderDetailRepository OrderDetails { get; }
+
+
 }

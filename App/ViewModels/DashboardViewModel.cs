@@ -8,6 +8,7 @@ using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore;
 using SkiaSharp;
 using LiveChartsCore.SkiaSharpView.VisualElements;
+using System.Diagnostics;
 
 namespace App.ViewModels;
 
@@ -25,7 +26,10 @@ public partial class DashboardViewModel : ObservableRecipient, INavigationAware
     public ObservableCollection<decimal> WeekProfitList { get; } = new ObservableCollection<decimal>();
     public ObservableCollection<decimal> MonthProfitList { get; } = new ObservableCollection<decimal>();
     public ObservableCollection<decimal> YearProfitList { get; } = new ObservableCollection<decimal>();
-    
+    public ObservableCollection<ProductSelledCount> WeekTopProductsSelledCounts { get; } = new ObservableCollection<ProductSelledCount>();
+    public ObservableCollection<ProductSelledCount> MonthTopProductsSelledCounts { get; } = new ObservableCollection<ProductSelledCount>();
+    public ObservableCollection<ProductSelledCount> YearTopProductsSelledCounts { get; } = new ObservableCollection<ProductSelledCount>();
+
     public DashboardViewModel(IShopService repos)
     {
         _shopService = repos;
@@ -37,6 +41,50 @@ public partial class DashboardViewModel : ObservableRecipient, INavigationAware
         GetTotalMonthOrder();
         GetTotalWeekOrder();
         SyncTopProductOutOfStock();
+        SyncTopProductSelledCount();
+    }
+
+    private void SyncTopProductSelledCount()
+    {
+        SyncWeekTopProductSelledCount();
+        SyncMonthTopProductSelledCount();
+        SyncYearTopProductSelledCount();
+    }
+
+    private async void SyncYearTopProductSelledCount()
+    {
+        var data = await _shopService.OrderService.GetThisYearProductSelledCountAsync();
+        Debug.WriteLine(data.Count());
+
+        YearTopProductsSelledCounts.Clear();
+
+        foreach (var item in data)
+        {
+            YearTopProductsSelledCounts.Add(item);
+        }
+    }
+    private async void SyncMonthTopProductSelledCount()
+    {
+        var data = await _shopService.OrderService.GetThisMonthProductSelledCountAsync();
+        Debug.WriteLine(data.Count());
+
+        MonthTopProductsSelledCounts.Clear();
+        foreach (var item in data)
+        {
+            MonthTopProductsSelledCounts.Add(item);
+        }
+    }
+
+    private async void SyncWeekTopProductSelledCount()
+    {
+        var data = await _shopService.OrderService.GetThisWeekProductSelledCountAsync();
+        Debug.WriteLine(data.Count());
+
+        WeekTopProductsSelledCounts.Clear();
+        foreach (var item in data)
+        {
+            WeekTopProductsSelledCounts.Add(item);
+        }
     }
 
     public ISeries[] Series

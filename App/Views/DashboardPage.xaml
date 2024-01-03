@@ -8,7 +8,7 @@
     mc:Ignorable="d">
 
     <Page.Resources>
-        <DataTemplate x:Key="TopSellingProductListViewTemplate" x:DataType="models:Product">
+        <DataTemplate x:Key="TopSellingProductListViewTemplate" x:DataType="models:ProductSelledCount">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
@@ -20,12 +20,12 @@
                 </Grid.ColumnDefinitions>
                 <Ellipse x:Name="Ellipse"
                     Grid.RowSpan="2"
-                    Width ="32"
-                    Height="32"
+                    Width ="8"
+                    Height="8"
                     Margin="6"
                     VerticalAlignment="Center"
                     HorizontalAlignment="Center"
-                    Fill="{ThemeResource SystemControlBackgroundBaseMediumBrush}"/>
+                    Fill="{ThemeResource AccentTextFillColorPrimaryBrush}"/>
                 <TextBlock Grid.Column="1"
                     Text="{x:Bind Name}"
                     x:Phase="1"
@@ -34,7 +34,7 @@
                 <TextBlock  Grid.Column="1"
                     Grid.Row="1"
                     Style="{ThemeResource BodyTextBlockStyle}"
-                    Margin="12,0,0,6"><Run>Selled: </Run><Run Text="{x:Bind Quantity}"/></TextBlock>
+                    Margin="12,0,0,6"><Run Text="Selled: "> </Run><Run Text="{x:Bind TotalQuantitySold}"/></TextBlock>
             </Grid>
         </DataTemplate>
     </Page.Resources>
@@ -60,17 +60,17 @@
 				
 			
 
-				<StackPanel Padding="16" Margin="0, 0, 34, 16"  BorderThickness="1" BorderBrush="Black" CornerRadius="8,8,8,8">
-					<TextBlock Text="Total Product" Style="{StaticResource BodyTextBlockStyle}" />
-                    <TextBlock Text="{x:Bind ViewModel.TotalProduct }" Style="{StaticResource TitleLargeTextBlockStyle}" />
+				<StackPanel Padding="16" Margin="0, 0, 32, 16"  BorderThickness="1" BorderBrush="Black" CornerRadius="8,8,8,8">
+                    <TextBlock Text="Total Product" Style="{StaticResource SubtitleTextBlockStyle}" />
+                    <TextBlock TextAlignment="Right" Margin="0 8 32 4" Text="{x:Bind ViewModel.TotalProduct }" Style="{StaticResource TitleLargeTextBlockStyle}" />
 				</StackPanel>
                 <StackPanel Grid.Column="1" Padding="16" Margin="0, 0, 34, 16" Background="Transparent" BorderThickness="1" BorderBrush="Black" CornerRadius="8,8,8,8">
-					<TextBlock Text="Total order in week" Style="{StaticResource BodyTextBlockStyle}" />
-					<TextBlock Text="{x:Bind ViewModel.TotalWeekOrder}" Style="{StaticResource TitleLargeTextBlockStyle}" />
+                    <TextBlock Text="Total order in week" Style="{StaticResource SubtitleTextBlockStyle}" />
+                    <TextBlock TextAlignment="Right" Margin="0 8 32 4" Text="{x:Bind ViewModel.TotalWeekOrder}" Style="{StaticResource TitleLargeTextBlockStyle}" />
 				</StackPanel>
                 <StackPanel Grid.Column="2" Padding="16" Margin="0, 0, 34, 16" Background="Transparent" BorderThickness="1" BorderBrush="Black" CornerRadius="8,8,8,8">
-					<TextBlock Text="Total order in month" Style="{StaticResource BodyTextBlockStyle}" />
-					<TextBlock Text="{x:Bind ViewModel.TotalMonthOrder}" Style="{StaticResource TitleLargeTextBlockStyle}" />
+					<TextBlock Text="Total order in month" Style="{StaticResource SubtitleTextBlockStyle}" />
+                    <TextBlock TextAlignment="Right" Margin="0 8 32 4" Text="{x:Bind ViewModel.TotalMonthOrder}" Style="{StaticResource TitleLargeTextBlockStyle}" />
 				</StackPanel>
 
 			</Grid>
@@ -139,19 +139,31 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <StackPanel Padding="16" Margin="0, 0, 34, 34"  BorderThickness="2" BorderBrush="Black" CornerRadius="8,8,8,8">
-                    <TextBlock Text="Top Selling This Week" Style="{StaticResource BodyTextBlockStyle}" />
+                    <TextBlock Text="Top Selling This Week" Style="{StaticResource SubtitleTextBlockStyle}" />
                     <ListView
-                        SelectionMode="Single"
+                        Margin="0 8 0 0"
+                        ItemsSource="{x:Bind ViewModel.WeekTopProductsSelledCounts}"
+                        SelectionMode="None"
                         ItemTemplate="{StaticResource TopSellingProductListViewTemplate}">
                     </ListView>
                 </StackPanel>
                 <StackPanel Padding="16" Margin="0, 0, 34, 34"  BorderThickness="2" Grid.Column="1" BorderBrush="Black" CornerRadius="8,8,8,8">
-                    <TextBlock Text="Top Selling This Month" Style="{StaticResource BodyTextBlockStyle}" />
-                    <TextBlock Text="{x:Bind ViewModel.TotalProduct }" Style="{StaticResource TitleLargeTextBlockStyle}" />
+                    <TextBlock Text="Top Selling This Month" Style="{StaticResource SubtitleTextBlockStyle}" />
+                    <ListView
+                        Margin="0 8 0 0"
+                        ItemsSource="{x:Bind ViewModel.MonthTopProductsSelledCounts}"
+                        SelectionMode="None"
+                        ItemTemplate="{StaticResource TopSellingProductListViewTemplate}">
+                    </ListView> 
                 </StackPanel>
                 <StackPanel Padding="16" Margin="0, 0, 34, 34"  BorderThickness="2" Grid.Column="2" BorderBrush="Black" CornerRadius="8,8,8,8">
-                    <TextBlock Text="Top Selling This Year" Style="{StaticResource BodyTextBlockStyle}" />
-                    <TextBlock Text="{x:Bind ViewModel.TotalProduct }" Style="{StaticResource TitleLargeTextBlockStyle}" />
+                    <TextBlock Text="Top Selling This Year" Style="{StaticResource SubtitleTextBlockStyle}" />
+                    <ListView
+                        Margin="0 8 0 0"
+                        ItemsSource="{x:Bind ViewModel.YearTopProductsSelledCounts}"
+                        SelectionMode="None"
+                        ItemTemplate="{StaticResource TopSellingProductListViewTemplate}">
+                    </ListView>
                 </StackPanel>
             </Grid>
         </Grid>

@@ -23,18 +23,34 @@ public partial class MyShopContext : DbContext
     public virtual DbSet<Order> Orders { get; set; } = null!;
     public virtual DbSet<OrderDetail> OrderDetails { get; set; } = null!;
     public virtual DbSet<Product> Products { get; set; } = null!;
+    
+    //public virtual DbSet<ProductDaySelledCount> ProductDaySelledCounts { get; set; } = null!;
+    //public virtual DbSet<ProductWeekSelledCount> ProductWeekSelledCounts { get; set; } = null!;
+    //public virtual DbSet<ProductMonthSelledCount> ProductMonthSelledCounts { get; set; } = null!;
+    //public virtual DbSet<ProductYearSelledCount> ProductYearSelledCounts { get; set; } = null!;
+    public virtual DbSet<ProductSelledCount> ThisWeekProductSelledCounts { get; set; } = null!;
+    //public virtual DbSet<ThisMonthProductSelledCount> ThisMonthProductSelledCounts { get; set; } = null!;
+    //public virtual DbSet<ThisYearProductSelledCount> ThisYearProductSelledCounts { get; set; } = null!;
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         if (!optionsBuilder.IsConfigured)
         {
-            //TODO: hide this string
-            optionsBuilder.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=MyShop;Integrated Security=True;");
+            optionsBuilder.UseSqlServer("connectionstring here");
         }
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<ProductSelledCount>(entity =>
+        {
+            entity.HasNoKey();
+
+            entity.ToView("ThisWeekProductSelledCounts");
+
+            entity.Property(e => e.Name).IsRequired();
+        });
+
         modelBuilder.Entity<Order>(entity =>
         {
             entity.HasIndex(e => e.CustomerId, "IX_Orders_CustomerId");

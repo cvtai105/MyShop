@@ -19,6 +19,9 @@ public interface IOrderService
     Task<int> GetCurrentWeekOrderCountAsync();
     Task<int> GetCurrentMonthOrderCountAsync();
 
+    Task<IEnumerable<ProductSelledCount>> GetThisWeekProductSelledCountAsync();
+    Task<IEnumerable<ProductSelledCount>> GetThisYearProductSelledCountAsync();
+    Task<IEnumerable<ProductSelledCount>> GetThisMonthProductSelledCountAsync();
     /// <param name="count"> number of lastest day income will be include to the result </param>
     Task<IEnumerable<decimal>> GetIncomeByDay(int count);
 
@@ -49,4 +52,5 @@ public interface IOrderService
 
     // get orders by date, pagesize, page
     Task<IEnumerable<Order>> QueryOrderPage(DateTimeOffset? startDate, DateTimeOffset? endDate, int pageSize, int? selectedPage);
+   
 }

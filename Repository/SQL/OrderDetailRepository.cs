@@ -85,10 +85,17 @@ public class OrderDetailRepository : IOrderDetailRepository
     public Task<IEnumerable<ProductWeekSelledCount>> GetWeekSelledCounts(int productId) => throw new NotImplementedException();
     public Task<IEnumerable<ProductMonthSelledCount>> GetMonthSelledCounts(int productId) => throw new NotImplementedException();
     public Task<IEnumerable<ProductYearSelledCount>> GetYearSelledCounts(int productId) => throw new NotImplementedException();
-    public Task<IEnumerable<ThisWeekProductSelledCount>> GetTopSellingProductsThisWeek(int count)
+    public async Task<IEnumerable<ProductSelledCount>> GetTopSellingProductsThisWeek(int count)
     {
-        return _db.Database.("exec GetTopSellingProductsCurrentWeek").ToListAsync();
+        return await _db.ThisWeekProductSelledCounts.FromSqlRaw("exec GetTopSellingProductsCurrentWeek").ToListAsync();
+
     }
-    public Task<IEnumerable<ThisMonthProductSelledCount>> GetTopSellingProductsThisMonth(int count) => throw new NotImplementedException();
-    public Task<IEnumerable<ThisYearProductSelledCount>> GetTopSellingProductsThisYear(int count) => throw new NotImplementedException();
+    public async Task<IEnumerable<ProductSelledCount>> GetTopSellingProductsThisMonth(int count)
+    {
+        return await _db.ThisWeekProductSelledCounts.FromSqlRaw("exec GetTopSellingProductsCurrentMonth").ToListAsync();
+    }
+    public async Task<IEnumerable<ProductSelledCount>> GetTopSellingProductsThisYear(int count)
+    {
+        return await _db.ThisWeekProductSelledCounts.FromSqlRaw("exec GetTopSellingProductsCurrentYear").ToListAsync();
+    }
 }
