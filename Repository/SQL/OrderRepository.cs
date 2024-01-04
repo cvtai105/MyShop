@@ -58,11 +58,10 @@ public class OrderRepository : IOrderRepository
 
     public async Task<int> GetCurrentWeekOrderCount()
     {
-        DateTime startWeek = DateTime.Today.AddDays(-1 * (int)(DateTime.Today.DayOfWeek));
+        var startWeek = DateTime.Today.AddDays(-1 * (int)(DateTime.Today.DayOfWeek));
         return await _db.Orders.Where(o => o.OrderPlaced >= startWeek).CountAsync();
     }
 
-    public Task<IEnumerable<decimal>> GetIncomeByDay(int count) => throw new NotImplementedException();
 
     public async Task<int> GetTotalMonthOrder()
     {

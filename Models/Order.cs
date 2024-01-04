@@ -35,7 +35,7 @@ public partial class Order
             {
                 if(item.SalePrice != null)
                 {
-                    total += (decimal)item.SalePrice;
+                    total += (decimal)(item.SalePrice * item.Quantity);
                 }
             }
 

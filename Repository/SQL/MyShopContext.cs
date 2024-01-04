@@ -23,14 +23,18 @@ public partial class MyShopContext : DbContext
     public virtual DbSet<Order> Orders { get; set; } = null!;
     public virtual DbSet<OrderDetail> OrderDetails { get; set; } = null!;
     public virtual DbSet<Product> Products { get; set; } = null!;
-    
-    //public virtual DbSet<ProductDaySelledCount> ProductDaySelledCounts { get; set; } = null!;
-    //public virtual DbSet<ProductWeekSelledCount> ProductWeekSelledCounts { get; set; } = null!;
-    //public virtual DbSet<ProductMonthSelledCount> ProductMonthSelledCounts { get; set; } = null!;
-    //public virtual DbSet<ProductYearSelledCount> ProductYearSelledCounts { get; set; } = null!;
-    public virtual DbSet<ProductSelledCount> ThisWeekProductSelledCounts { get; set; } = null!;
-    //public virtual DbSet<ThisMonthProductSelledCount> ThisMonthProductSelledCounts { get; set; } = null!;
-    //public virtual DbSet<ThisYearProductSelledCount> ThisYearProductSelledCounts { get; set; } = null!;
+
+    public virtual DbSet<ProductSoldCountDay> ProductSoldCountDays { get; set; } = null!;
+    public virtual DbSet<ProductSoldCountWeek> ProductSoldCountWeeks { get; set; } = null!;
+    public virtual DbSet<ProductSoldCountMonth> ProductSoldCountMonths { get; set; } = null!;
+    public virtual DbSet<ProductSoldCountYear> ProductSoldCountYears { get; set; } = null!;
+
+    public virtual DbSet<DayIncome> DayIncomes { get; set; } = null!;
+    public virtual DbSet<WeekIncome> WeekIncomes { get; set; } = null!;
+    public virtual DbSet<MonthIncome> MonthIncomes { get; set; } = null!;
+    public virtual DbSet<YearIncome> YearIncomes { get; set; } = null!;
+
+    public virtual DbSet<ProductSoldCount> ProductSoldCounts { get; set; } = null!;
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -42,12 +46,19 @@ public partial class MyShopContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<ProductSelledCount>(entity =>
+        modelBuilder.Entity<DayIncome>(entity => { entity.HasNoKey(); });
+        modelBuilder.Entity<WeekIncome>(entity => { entity.HasNoKey(); });
+        modelBuilder.Entity<MonthIncome>(entity => { entity.HasNoKey(); });
+        modelBuilder.Entity<YearIncome>(entity => { entity.HasNoKey(); });
+
+        modelBuilder.Entity<ProductSoldCountDay>(entity => { entity.HasNoKey(); });
+        modelBuilder.Entity<ProductSoldCountWeek>(entity => { entity.HasNoKey(); });
+        modelBuilder.Entity<ProductSoldCountMonth>(entity => { entity.HasNoKey(); });
+        modelBuilder.Entity<ProductSoldCountYear>(entity => { entity.HasNoKey(); });
+
+        modelBuilder.Entity<ProductSoldCount>(entity =>
         {
             entity.HasNoKey();
-
-            entity.ToView("ThisWeekProductSelledCounts");
-
             entity.Property(e => e.Name).IsRequired();
         });
 

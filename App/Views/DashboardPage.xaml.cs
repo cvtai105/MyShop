@@ -1,6 +1,9 @@
 ﻿using App.ViewModels;
-
+using Microsoft.UI.Input;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
+using Windows.Devices.Input;
 
 namespace App.Views;
 
@@ -15,5 +18,16 @@ public sealed partial class DashboardPage : Page
     {
         ViewModel = App.GetService<DashboardViewModel>();
         InitializeComponent();
+    }
+
+    private void OnChartPointerEnter(object sender, PointerRoutedEventArgs e)
+    {
+        //disable scrollviewer scroll
+        PageScrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Disabled;
+    }
+    private void OnChartPointerExit(object sender, PointerRoutedEventArgs e)
+    {
+        //enable scrollviewer scroll
+        PageScrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
     }
 }

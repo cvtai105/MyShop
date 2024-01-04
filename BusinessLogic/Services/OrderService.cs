@@ -17,7 +17,6 @@ public class OrderService : IOrderService
         }
 
         var newOrder = await _repos.Orders.UpsertAsync(order);
-        Debug.WriteLine($"orderId: {newOrder.Id}");
 
 
         //TODO: convert to ForEachAsync
@@ -60,13 +59,85 @@ public class OrderService : IOrderService
     {
         return await _repos.OrderDetails.GetByOrderAsync(orderId);
     }
-    public async Task<IEnumerable<decimal>> GetIncomeByDay(int count)
+    public async Task<IEnumerable<DayIncome>> GetIncomeByDay(int count)
     {
-        return await _repos.Orders.GetIncomeByDay(count);
+        var data = await _repos.OrderDetails.GetDaysIncome();
+        var sorted = new List<DayIncome>(data);
+
+        //sort from now to past
+        sorted.Sort((a, b) => b.OrderPlaced.CompareTo(a.OrderPlaced));
+
+        //fill in missing days
+        var result = new List<DayIncome>();
+        var date = DateTime.Today;
+        var flag = 0;
+       
+
+        while(flag < sorted.Count)
+        {
+            while(sorted[flag].OrderPlaced < date)
+            {
+                result.Insert(0,new DayIncome() { OrderPlaced = date, Profit = 0, Revenue = 0 });
+                date = date.AddDays(-1);
+            }
+            result.Insert(0,sorted[flag]);
+            date = date.AddDays(-1);
+            flag++;
+        }
+        //var size = result.Count;
+        //result.RemoveRange(0, size-count); //retain only count lastest days
+        return result;
     }
-    public Task<IEnumerable<decimal>> GetIncomeByMonth(int count) => throw new NotImplementedException();
-    public Task<IEnumerable<decimal>> GetIncomeByWeek(int count) => throw new NotImplementedException();
-    public Task<IEnumerable<decimal>> GetIncomeByYear(int count) => throw new NotImplementedException();
+    public async Task<IEnumerable<MonthIncome>> GetIncomeByMonth(int count)
+    {
+        var data = await _repos.OrderDetails.GetMonthsIncome();
+        var sorted = new List<MonthIncome>(data);
+        sorted.Sort((a, b) => b.Year==a.Year?b.Month.CompareTo(a.Month) : b.Year.CompareTo(a.Year));
+
+        var result = new List<MonthIncome>();
+        var date = DateTime.Today;
+        var flag = 0;
+        while(flag < sorted.Count)
+        {
+            while(sorted[flag].Year < date.Year || (sorted[flag].Year == date.Year && sorted[flag].Month < date.Month))
+            {
+                result.Insert(0, new MonthIncome() { Year = date.Year, Month = date.Month, Profit = 0, Revenue = 0 });
+                date = date.AddMonths(-1);
+            }
+            result.Insert(0, sorted[flag]);
+            date = date.AddMonths(-1);
+            flag++;
+        }
+
+        return result;
+    }
+    public async Task<IEnumerable<WeekIncome>> GetIncomeByWeek(int count)
+    {
+        var data = await _repos.OrderDetails.GetWeeksIncome();
+        var sorted = new List<WeekIncome>(data);
+
+        //sort from now to past
+        sorted.Sort((a, b) => b.StartOfWeek.CompareTo(a.StartOfWeek));
+
+        //fill in missing week
+        var result = new List<WeekIncome>();
+        var date = DateTime.Today.AddDays(-1 * (int)(DateTime.Today.DayOfWeek));
+        var flag = 0;
+
+        while (flag < sorted.Count)
+        {
+            while (sorted[flag].StartOfWeek < date)
+            {
+                result.Insert(0, new WeekIncome() { StartOfWeek = date, Profit = 0, Revenue = 0 });
+                date = date.AddDays(-7);
+            }   
+            result.Insert(0, sorted[flag]);
+            date = date.AddDays(-7);
+            flag++;
+        }
+        return result;
+    }
+    public Task<IEnumerable<YearIncome>> GetIncomeByYear(int count) => throw new NotImplementedException();
     public Task<decimal> GetProfitByDay(int count) => throw new NotImplementedException();
     public Task<decimal> GetProfitByMonth(int count) => throw new NotImplementedException();
     public Task<decimal> GetProfitByWeek(int count) => throw new NotImplementedException();
@@ -118,15 +189,15 @@ public class OrderService : IOrderService
         return await _repos.Orders.QueryOrderPage(p1, p2, pageSize, (int)selectedPage);
     }
 
-    public async Task<IEnumerable<ProductSelledCount>> GetThisWeekProductSelledCountAsync()
+    public async Task<IEnumerable<ProductSoldCount>> GetThisWeekProductSoldCountAsync()
     {
         return  await _repos.OrderDetails.GetTopSellingProductsThisWeek(3);
     }
-    public async Task<IEnumerable<ProductSelledCount>> GetThisYearProductSelledCountAsync()
+    public async Task<IEnumerable<ProductSoldCount>> GetThisYearProductSoldCountAsync()
     {
         return await _repos.OrderDetails.GetTopSellingProductsThisYear(3);
     }
-    public async Task<IEnumerable<ProductSelledCount>> GetThisMonthProductSelledCountAsync()
+    public async Task<IEnumerable<ProductSoldCount>> GetThisMonthProductSoldCountAsync()
     {
         return await _repos.OrderDetails.GetTopSellingProductsThisMonth(3);
     }

@@ -47,4 +47,9 @@ public static class DateTimeExtension{
         var endOfYear = new DateTime(root.Year, 12, 31);
         return endOfYear;
     }
+
+    public static string GetString(this DateTime root)
+    {
+        return $"{root.Day}/{root.Month}/{root.Year}";
+    }
 }

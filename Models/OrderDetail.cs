@@ -21,19 +21,23 @@ public partial class OrderDetail
     [ForeignKey("OrderId")]
     [InverseProperty("OrderDetails")]
     public virtual Order? Order { get; set; } = null;
+
+
     [ForeignKey("ProductId")]
     [InverseProperty("OrderDetails")]
     public virtual Product Product { get; set; } = null!;
 
     public OrderDetail Clone()
     {
-        var result = new OrderDetail();
-        result.Quantity = Quantity;
-        result.ProductId = ProductId;
-        //result.Product = Product;           //why cannot insert to database if have this line??
-        result.OrderId = OrderId;
-        result.ImportPrice = ImportPrice;
-        result.SalePrice = SalePrice;
+        var result = new OrderDetail
+        {
+            Quantity = Quantity,
+            ProductId = ProductId,
+            //result.Product = Product;    //why cannot insert to database if have this line??
+            OrderId = OrderId,
+            ImportPrice = ImportPrice,
+            SalePrice = SalePrice
+        };
         return result;
     }
 

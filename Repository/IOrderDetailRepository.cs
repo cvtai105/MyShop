@@ -22,17 +22,17 @@ public interface IOrderDetailRepository
 
     Task InsertAsync(OrderDetail orderDetail);
 
-    Task<IEnumerable<DayIncome>> GetDayIncomes();
-    Task<IEnumerable<WeekIncome>> GetWeekIncomes();
-    Task<IEnumerable<MonthIncome>> GetMonthIncomes();
-    Task<IEnumerable<YearIncome>> GetYearIncomes();
+    Task<IEnumerable<DayIncome>> GetDaysIncome();
+    Task<IEnumerable<WeekIncome>> GetWeeksIncome();
+    Task<IEnumerable<MonthIncome>> GetMonthsIncome();
+    Task<IEnumerable<YearIncome>> GetYearsIncome();
 
-    Task<IEnumerable<ProductDaySelledCount>> GetDaySelledCounts(int productId);
-    Task<IEnumerable<ProductWeekSelledCount>> GetWeekSelledCounts(int productId);
-    Task<IEnumerable<ProductMonthSelledCount>> GetMonthSelledCounts(int productId);
-    Task<IEnumerable<ProductYearSelledCount>> GetYearSelledCounts(int productId);
+    Task<IEnumerable<ProductSoldCountDay>> GetSoldCountDays(int productId);
+    Task<IEnumerable<ProductSoldCountWeek>> GetSoldCountWeeks(int productId);
+    Task<IEnumerable<ProductSoldCountMonth>> GetSoldCountMonths(int productId);
+    Task<IEnumerable<ProductSoldCountYear>> GetSoldCountYears(int productId);
 
-    Task<IEnumerable<ProductSelledCount>> GetTopSellingProductsThisWeek(int count);
-    Task<IEnumerable<ProductSelledCount>> GetTopSellingProductsThisMonth(int count);
-    Task<IEnumerable<ProductSelledCount>> GetTopSellingProductsThisYear(int count);
+    Task<IEnumerable<ProductSoldCount>> GetTopSellingProductsThisWeek(int count);
+    Task<IEnumerable<ProductSoldCount>> GetTopSellingProductsThisMonth(int count);
+    Task<IEnumerable<ProductSoldCount>> GetTopSellingProductsThisYear(int count);
 }

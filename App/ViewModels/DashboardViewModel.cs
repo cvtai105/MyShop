@@ -9,6 +9,7 @@ using LiveChartsCore;
 using SkiaSharp;
 using LiveChartsCore.SkiaSharpView.VisualElements;
 using System.Diagnostics;
+using App.Chart;
 
 namespace App.ViewModels;
 
@@ -17,18 +18,15 @@ namespace App.ViewModels;
 public partial class DashboardViewModel : ObservableRecipient, INavigationAware
 {
     private readonly IShopService _shopService;
-    const int ChartPointCount = 20;
-    public ObservableCollection<decimal> DayRevenueList { get; } = new ObservableCollection<decimal>();
-    public ObservableCollection<decimal> WeekRevenueList { get; } = new ObservableCollection<decimal>();
-    public ObservableCollection<decimal> MonthRevenueList { get; } = new ObservableCollection<decimal>();
-    public ObservableCollection<decimal> YearRevenueList { get; } = new ObservableCollection<decimal>();
-    public ObservableCollection<decimal> DayProfitList { get; } = new ObservableCollection<decimal>();
-    public ObservableCollection<decimal> WeekProfitList { get; } = new ObservableCollection<decimal>();
-    public ObservableCollection<decimal> MonthProfitList { get; } = new ObservableCollection<decimal>();
-    public ObservableCollection<decimal> YearProfitList { get; } = new ObservableCollection<decimal>();
-    public ObservableCollection<ProductSelledCount> WeekTopProductsSelledCounts { get; } = new ObservableCollection<ProductSelledCount>();
-    public ObservableCollection<ProductSelledCount> MonthTopProductsSelledCounts { get; } = new ObservableCollection<ProductSelledCount>();
-    public ObservableCollection<ProductSelledCount> YearTopProductsSelledCounts { get; } = new ObservableCollection<ProductSelledCount>();
+    private const int ChartPointCount = 20;
+
+    [ObservableProperty]
+    private LiveChartPack dayIncomeChart;
+    [ObservableProperty]
+    private LiveChartPack weekIncomeChart;
+    public ObservableCollection<ProductSoldCount> WeekTopProductsSoldCounts { get; } = new ObservableCollection<ProductSoldCount>();
+    public ObservableCollection<ProductSoldCount> MonthTopProductsSoldCounts { get; } = new ObservableCollection<ProductSoldCount>();
+    public ObservableCollection<ProductSoldCount> YearTopProductsSoldCounts { get; } = new ObservableCollection<ProductSoldCount>();
 
     public DashboardViewModel(IShopService repos)
     {
@@ -41,75 +39,61 @@ public partial class DashboardViewModel : ObservableRecipient, INavigationAware
         GetTotalMonthOrder();
         GetTotalWeekOrder();
         SyncTopProductOutOfStock();
-        SyncTopProductSelledCount();
+        SyncTopProductSoldCount();
+        SyncDayIncomeChart();
     }
 
-    private void SyncTopProductSelledCount()
+    private async void SyncDayIncomeChart()
     {
-        SyncWeekTopProductSelledCount();
-        SyncMonthTopProductSelledCount();
-        SyncYearTopProductSelledCount();
+        var data = await _shopService.OrderService.GetIncomeByDay(ChartPointCount);
+        DayIncomeChart = new LiveChartPack(data);
+        foreach (var s in DayIncomeChart.Series)
+        {
+            Debug.WriteLine(s);
+        }
+    }
+    
+    private void SyncTopProductSoldCount()
+    {
+        //TODO: fix a bug cannot use task.waitAll
+        SyncWeekTopProductSoldCount();
+        SyncMonthTopProductSoldCount();
+        SyncYearTopProductSoldCount();
     }
 
-    private async void SyncYearTopProductSelledCount()
+    private async void SyncYearTopProductSoldCount()
     {
-        var data = await _shopService.OrderService.GetThisYearProductSelledCountAsync();
-        Debug.WriteLine(data.Count());
+        var data = await _shopService.OrderService.GetThisYearProductSoldCountAsync();
 
-        YearTopProductsSelledCounts.Clear();
+        YearTopProductsSoldCounts.Clear();
 
         foreach (var item in data)
         {
-            YearTopProductsSelledCounts.Add(item);
+            YearTopProductsSoldCounts.Add(item);
         }
     }
-    private async void SyncMonthTopProductSelledCount()
+    private async void SyncMonthTopProductSoldCount()
     {
-        var data = await _shopService.OrderService.GetThisMonthProductSelledCountAsync();
-        Debug.WriteLine(data.Count());
+        var data = await _shopService.OrderService.GetThisMonthProductSoldCountAsync();
 
-        MonthTopProductsSelledCounts.Clear();
+        MonthTopProductsSoldCounts.Clear();
         foreach (var item in data)
         {
-            MonthTopProductsSelledCounts.Add(item);
+            MonthTopProductsSoldCounts.Add(item);
         }
     }
 
-    private async void SyncWeekTopProductSelledCount()
+    private async void SyncWeekTopProductSoldCount()
     {
-        var data = await _shopService.OrderService.GetThisWeekProductSelledCountAsync();
-        Debug.WriteLine(data.Count());
+        var data = await _shopService.OrderService.GetThisWeekProductSoldCountAsync();
 
-        WeekTopProductsSelledCounts.Clear();
+        WeekTopProductsSoldCounts.Clear();
         foreach (var item in data)
         {
-            WeekTopProductsSelledCounts.Add(item);
+            WeekTopProductsSoldCounts.Add(item);
         }
     }
 
-    public ISeries[] Series
-    {
-        get; set;
-    } =
-    {
-        new LineSeries<double>
-        {
-            Values = new double[] { 2, 1, 3, 5, 3, 4, 6 },
-            Fill = null
-        }
-    };
-
-    public LabelVisual Title
-    {
-        get; set;
-    } =
-        new LabelVisual
-        {
-            Text = "My chart title",
-            TextSize = 25,
-            Padding = new LiveChartsCore.Drawing.Padding(15),
-            Paint = new SolidColorPaint(SKColors.DarkSlateGray)
-        };
 
     [ObservableProperty]
     private int totalProduct = 0;

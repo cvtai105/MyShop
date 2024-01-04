@@ -7,34 +7,35 @@ using Models;
 
 namespace Models;
 
-public class ProductDaySelledCount
+public class ProductSoldCountDay
 {
     public DateTime Date { get; set; }
-    public int SelledCount { get; set; }
+    public int TotalQuantitySold { get; set; }
 }
 
-public class ProductWeekSelledCount
+public class ProductSoldCountWeek 
 {
     public DateTime StartWeek { get; set; }
-    public int SelledCount { get; set; }
+    public int TotalQuantitySold { get; set; }
 }
 
-public class ProductMonthSelledCount
+public class ProductSoldCountMonth 
 {
     public int Month { get; set; }
-    public int SelledCount { get; set; }
+    public int Year { get; set; }   
+    public int TotalQuantitySold { get; set; }
 }
 
-public class ProductYearSelledCount
+public class ProductSoldCountYear 
 {
     public int Year { get; set; }
-    public int SelledCount { get; set; }
+    public int TotalQuantitySold { get; set; }
 }
 
-public class ProductSelledCount
+public class ProductSoldCount 
 {
-    public int ProductId { get; set; }
-    public string Name { get; set; } = null!;
+    public int ProductId { get; set; } = 0;
+    public string Name { get; set; } = "";
     public int TotalQuantitySold { get; set; }
     
     public override string ToString()

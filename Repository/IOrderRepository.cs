@@ -12,7 +12,6 @@ public interface IOrderRepository
     Task<IEnumerable<Order>> GetByDateAsync(DateTime start, DateTime end);
     Task<int> GetCurrentWeekOrderCount();
     Task<int> GetCurrentMonthOrderCount();
-    Task<IEnumerable<decimal>> GetIncomeByDay(int count);
     Task<IEnumerable<Order>> QueryOrderPage(DateTime? startDate, DateTime? endDate, int pageSize, int selectedPage);
     Task<int> GetTotalOrderCount(DateTime? startDate, DateTime? endDate);
 }

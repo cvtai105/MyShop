@@ -19,32 +19,22 @@ public interface IOrderService
     Task<int> GetCurrentWeekOrderCountAsync();
     Task<int> GetCurrentMonthOrderCountAsync();
 
-    Task<IEnumerable<ProductSelledCount>> GetThisWeekProductSelledCountAsync();
-    Task<IEnumerable<ProductSelledCount>> GetThisYearProductSelledCountAsync();
-    Task<IEnumerable<ProductSelledCount>> GetThisMonthProductSelledCountAsync();
+    Task<IEnumerable<ProductSoldCount>> GetThisWeekProductSoldCountAsync();
+    Task<IEnumerable<ProductSoldCount>> GetThisYearProductSoldCountAsync();
+    Task<IEnumerable<ProductSoldCount>> GetThisMonthProductSoldCountAsync();
+
     /// <param name="count"> number of lastest day income will be include to the result </param>
-    Task<IEnumerable<decimal>> GetIncomeByDay(int count);
+    Task<IEnumerable<DayIncome>> GetIncomeByDay(int count);
 
     /// <param name="count"> number of lastest week income will be include to the result </param>
-    Task<IEnumerable<decimal>> GetIncomeByWeek(int count);
+    Task<IEnumerable<WeekIncome>> GetIncomeByWeek(int count);
 
     /// <param name="count"> number of lastest month income will be include to the result </param>
-    Task<IEnumerable<decimal>> GetIncomeByMonth(int count);
+    Task<IEnumerable<MonthIncome>> GetIncomeByMonth(int count);
 
     /// <param name="count"> number of lastest year income will be include to the result </param>
-    Task<IEnumerable<decimal>> GetIncomeByYear(int count);
+    Task<IEnumerable<YearIncome>> GetIncomeByYear(int count);
 
-    /// <param name="count"> number of lastest day profit will be include to the result </param>
-    Task<decimal> GetProfitByDay(int count);
-
-    /// <param name="count"> number of lastest week profit will be include to the result </param>
-    Task<decimal> GetProfitByWeek(int count);
-
-    /// <param name="count"> number of lastest month profit will be include to the result </param>
-    Task<decimal> GetProfitByMonth(int count);
-
-    /// <param name="count"> number of lastest year profit will be include to the result </param>
-    Task<decimal> GetProfitByYear(int count);
 
     // get total quantity of a product saled
     Task<int> GetQuantiyProductSaled(int productId);

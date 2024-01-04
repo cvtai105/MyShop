@@ -8,7 +8,7 @@
     mc:Ignorable="d">
 
     <Page.Resources>
-        <DataTemplate x:Key="TopSellingProductListViewTemplate" x:DataType="models:ProductSelledCount">
+        <DataTemplate x:Key="TopSellingProductListViewTemplate" x:DataType="models:ProductSoldCount">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
@@ -34,24 +34,23 @@
                 <TextBlock  Grid.Column="1"
                     Grid.Row="1"
                     Style="{ThemeResource BodyTextBlockStyle}"
-                    Margin="12,0,0,6"><Run Text="Selled: "> </Run><Run Text="{x:Bind TotalQuantitySold}"/></TextBlock>
+                    Margin="12,0,0,6"><Run Text="Sold: "> </Run><Run Text="{x:Bind TotalQuantitySold}"/></TextBlock>
             </Grid>
         </DataTemplate>
     </Page.Resources>
     
-	<ScrollViewer Padding="0 0 8 0">
+	<ScrollViewer Padding="0 0 8 0" Name="PageScrollViewer">
 		<Grid x:Name="ContentArea">
 			<Grid.RowDefinitions>
 				<RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
 				<RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
 			</Grid.RowDefinitions>
 
 
 			<!-- Phần trên -->
-			<Grid Grid.Row="0">
+			<Grid Grid.Row="3">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="*"/>
 					<ColumnDefinition Width="*"/>
@@ -106,31 +105,45 @@
 					</controls:DataGrid>
 				</Grid>
 			</StackPanel>
-            <Grid Grid.Row="3" Name="DayAndYearIncomeSection">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="2*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <Grid Name="DayIncomeSection">
-                    
+            <ScrollViewer Grid.Row="0" Height="Auto">
+            <Grid  Name="ChartSection" >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid Name="DayIncomeSection" DataContext="{x:Bind ViewModel.DayIncomeChart}">
+                    <lvc:CartesianChart  
+                        PointerEntered="OnChartPointerEnter"
+                        PointerExited="OnChartPointerExit"
+                        VerticalAlignment="Center"
+                        Height="400" Width="1200" XAxes="{Binding XAxes}" 
+                        Series="{Binding Series}" Title="{Binding Title}" 
+                        ZoomMode="X"
+                        LegendPosition="Right"
+                        LegendTextPaint="{Binding LegendTextPaint}"
+                        LegendBackgroundPaint="{Binding LedgendBackgroundPaint}"
+                        LegendTextSize="16">
+                    </lvc:CartesianChart>
                 </Grid>
-                <Grid Grid.Column="1" Name="YearIncomeSection">
-                    
+                <Grid  Name="WeekIncomeSection" Grid.Row="1" DataContext="{x:Bind ViewModel.WeekIncomeChart}">
+                    <lvc:CartesianChart  
+                        PointerEntered="OnChartPointerEnter"
+                        PointerExited="OnChartPointerExit"
+                        VerticalAlignment="Center"
+                        Height="400" Width="1200" XAxes="{Binding XAxes}" 
+                        Series="{Binding Series}" Title="{Binding Title}" 
+                        ZoomMode="X"
+                        LegendPosition="Right"
+                        LegendTextPaint="{Binding LegendTextPaint}"
+                        LegendBackgroundPaint="{Binding LedgendBackgroundPaint}"
+                        LegendTextSize="16">            
+                    </lvc:CartesianChart>
                 </Grid>
+                
             </Grid>
-
-            <Grid Grid.Row="4" Name="WeekAndYearIncomeSection">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="2*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <Grid Name="WeekIncomeSection">
-                    
-                </Grid>
-                <Grid Grid.Column="1" Name="MonthIncomeSection">
-                    
-                </Grid>
-            </Grid>
+            </ScrollViewer>
+            
 
             <Grid Grid.Row="1" Name="TopSellingSection" Margin="0 16 0 0">
                 <Grid.ColumnDefinitions>
@@ -142,7 +155,7 @@
                     <TextBlock Text="Top Selling This Week" Style="{StaticResource SubtitleTextBlockStyle}" />
                     <ListView
                         Margin="0 8 0 0"
-                        ItemsSource="{x:Bind ViewModel.WeekTopProductsSelledCounts}"
+                        ItemsSource="{x:Bind ViewModel.WeekTopProductsSoldCounts}"
                         SelectionMode="None"
                         ItemTemplate="{StaticResource TopSellingProductListViewTemplate}">
                     </ListView>
@@ -151,7 +164,7 @@
                     <TextBlock Text="Top Selling This Month" Style="{StaticResource SubtitleTextBlockStyle}" />
                     <ListView
                         Margin="0 8 0 0"
-                        ItemsSource="{x:Bind ViewModel.MonthTopProductsSelledCounts}"
+                        ItemsSource="{x:Bind ViewModel.MonthTopProductsSoldCounts}"
                         SelectionMode="None"
                         ItemTemplate="{StaticResource TopSellingProductListViewTemplate}">
                     </ListView> 
@@ -160,7 +173,7 @@
                     <TextBlock Text="Top Selling This Year" Style="{StaticResource SubtitleTextBlockStyle}" />
                     <ListView
                         Margin="0 8 0 0"
-                        ItemsSource="{x:Bind ViewModel.YearTopProductsSelledCounts}"
+                        ItemsSource="{x:Bind ViewModel.YearTopProductsSoldCounts}"
                         SelectionMode="None"
                         ItemTemplate="{StaticResource TopSellingProductListViewTemplate}">
                     </ListView>
