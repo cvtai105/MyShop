@@ -15,7 +15,7 @@ public class ProductSoldCountDay
 
 public class ProductSoldCountWeek 
 {
-    public DateTime StartWeek { get; set; }
+    public DateTime StartOfWeek { get; set; }
     public int TotalQuantitySold { get; set; }
 }
 

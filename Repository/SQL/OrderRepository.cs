@@ -58,7 +58,7 @@ public class OrderRepository : IOrderRepository
 
     public async Task<int> GetCurrentWeekOrderCount()
     {
-        var startWeek = DateTime.Today.AddDays(-1 * (int)(DateTime.Today.DayOfWeek));
+        var startWeek = DateTime.Today.AddDays(-(int)DateTime.Today.DayOfWeek + (int)DayOfWeek.Monday);
         return await _db.Orders.Where(o => o.OrderPlaced >= startWeek).CountAsync();
     }
 

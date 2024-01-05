@@ -16,9 +16,10 @@
     <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
   </PropertyGroup>
   <ItemGroup>
-    <None Remove="Dialog\CategoryEditDialog.xaml" />
     <None Remove="Dialog\ProductEditDialog.xaml" />
+    <None Remove="Views\LoginPage.xaml" />
     <None Remove="Views\OrderEditDialog.xaml" />
+    <None Remove="Views\ProductSoldChartDialog.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -61,6 +62,18 @@
 
   <ItemGroup>
     <Folder Include="Assets\ProductImages\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="Views\LoginPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="Views\ProductSoldChartDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
 
   <ItemGroup>

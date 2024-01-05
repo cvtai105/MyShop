@@ -7,7 +7,6 @@
     xmlns:models="using:Models"
     xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
     xmlns:behaviors="using:App.Behaviors"
-    behaviors:NavigationViewHeaderBehavior.HeaderMode="Never"
     mc:Ignorable="d">
 
     <Grid x:Name="ContentArea">
@@ -143,6 +142,10 @@
                             <AppBarSeparator />
                             <AppBarButton Icon="Delete"  Command="{x:Bind ViewModel.ProductDeleteCommand}" />
                         </StackPanel>
+
+                        <AppBarSeparator Margin="10 0 10 0"/>
+
+                        <Button Command="{x:Bind ViewModel.ShowStatisticsCommand}" Click="OnShowStatisticsClick">Show Statistics</Button>
                     </StackPanel>
                 </StackPanel>
 

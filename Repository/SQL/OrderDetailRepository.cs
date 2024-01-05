@@ -107,8 +107,20 @@ public class OrderDetailRepository : IOrderDetailRepository
     {
         return await _db.YearIncomes.FromSqlRaw("exec GetRevenueAndProfitByYear").ToListAsync();
     }
-    public Task<IEnumerable<ProductSoldCountDay>> GetSoldCountDays(int productId) => throw new NotImplementedException();
-    public Task<IEnumerable<ProductSoldCountWeek>> GetSoldCountWeeks(int productId) => throw new NotImplementedException();
-    public Task<IEnumerable<ProductSoldCountMonth>> GetSoldCountMonths(int productId) => throw new NotImplementedException();
-    public Task<IEnumerable<ProductSoldCountYear>> GetSoldCountYears(int productId) => throw new NotImplementedException();
+    public async Task<IEnumerable<ProductSoldCountDay>> GetSoldCountDays(int productId)
+    {
+        return await _db.ProductSoldCountDays.FromSqlRaw("exec GetProductSoldCountByDay {0}", productId).ToListAsync();
+    }
+    public async Task<IEnumerable<ProductSoldCountWeek>> GetSoldCountWeeks(int productId)
+    {
+        return await _db.ProductSoldCountWeeks.FromSqlRaw("exec GetProductSoldCountByWeek {0}", productId).ToListAsync();
+    }
+    public async Task<IEnumerable<ProductSoldCountMonth>> GetSoldCountMonths(int productId)
+    {
+        return await _db.ProductSoldCountMonths.FromSqlRaw("exec GetProductSoldCountByMonth {0}", productId).ToListAsync();
+    }
+    public async Task<IEnumerable<ProductSoldCountYear>> GetSoldCountYears(int productId)
+    {
+        return await _db.ProductSoldCountYears.FromSqlRaw("exec GetProductSoldCountByYear {0}", productId).ToListAsync();
+    }
 }

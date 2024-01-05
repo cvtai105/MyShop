@@ -23,11 +23,11 @@ public sealed partial class DashboardPage : Page
     private void OnChartPointerEnter(object sender, PointerRoutedEventArgs e)
     {
         //disable scrollviewer scroll
-        PageScrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Disabled;
+        PageScrollViewer.VerticalScrollMode = ScrollMode.Disabled;
     }
     private void OnChartPointerExit(object sender, PointerRoutedEventArgs e)
     {
         //enable scrollviewer scroll
-        PageScrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
+        PageScrollViewer.VerticalScrollMode = ScrollMode.Enabled;
     }
 }

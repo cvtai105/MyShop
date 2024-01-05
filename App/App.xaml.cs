@@ -1,4 +1,5 @@
-﻿using App.Activation;
+﻿using System.Configuration;
+using App.Activation;
 using App.Contracts.Services;
 using App.Core.Contracts.Services;
 using App.Core.Services;
@@ -47,7 +48,6 @@ public partial class App : Application
     public App()
     {
         InitializeComponent();
-
         Host = Microsoft.Extensions.Hosting.Host.
         CreateDefaultBuilder().
         UseContentRoot(AppContext.BaseDirectory).
@@ -63,14 +63,15 @@ public partial class App : Application
             services.AddSingleton<IActivationService, ActivationService>();
             services.AddSingleton<IPageService, PageService>();
             services.AddSingleton<INavigationService, NavigationService>();
-            services.AddSingleton<IShopService>(provider =>
+            services.AddTransient<IShopService>(provider =>
             {
-                // You can retrieve any required services from the provider if needed.
-                //var someDependency = provider.GetRequiredService<ISomeDependency>();
-
-                // Create an instance of ShopService with the desired arguments.
+                var server = ConfigurationManager.AppSettings.GetValues("Server").FirstOrDefault();
+                var database = ConfigurationManager.AppSettings.GetValues("Database").FirstOrDefault();
+                var user = ConfigurationManager.AppSettings.GetValues("Username").FirstOrDefault();
+                var password = ConfigurationManager.AppSettings.GetValues("Password").FirstOrDefault();
+                var isWindowsAuthentication = bool.Parse(ConfigurationManager.AppSettings.GetValues("IsWindowsAuthentication").FirstOrDefault());
                 //TODO: Replace with your own shop service.
-                return new ShopService("MSI", "MyShop", null, null, true);
+                return new ShopService(server, database, user, password, isWindowsAuthentication);
             });
 
             // Core Services
@@ -86,6 +87,7 @@ public partial class App : Application
             services.AddTransient<ShellPage>();
             services.AddTransient<ShellViewModel>();
             services.AddTransient<OrderEditViewModel>();
+            services.AddTransient<ProductChartViewModel>();
 
             // Configuration
 

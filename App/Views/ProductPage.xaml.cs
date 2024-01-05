@@ -2,6 +2,7 @@
 using App.ViewModels;
 
 using CommunityToolkit.WinUI.UI.Controls;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 namespace App.Views;
 
@@ -80,5 +81,16 @@ public sealed partial class ProductPage : Page
             Debug.WriteLine("Page Changed");
             _ = ViewModel.SyncProducts();
         }
+    }
+
+    private void OnShowStatisticsClick(object sender, RoutedEventArgs e)
+    {
+        var dialog = new ProductSoldChartDialog(ViewModel.SelectedProduct.Id)
+        {
+            Title = "Product Sold Statistics",
+            XamlRoot = XamlRoot
+        };
+        
+        _ = dialog.ShowAsync();
     }
 }

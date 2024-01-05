@@ -1,4 +1,5 @@
-﻿using App.Contracts.Services;
+﻿using System.Configuration;
+using App.Contracts.Services;
 using App.Views;
 
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -40,5 +41,7 @@ public partial class ShellViewModel : ObservableRecipient
         {
             Selected = selectedItem;
         }
+
+        //Write typeof(Selected).FullName! to App.config to set default page.
     }
 }

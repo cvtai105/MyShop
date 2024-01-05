@@ -20,10 +20,11 @@ public partial class DashboardViewModel : ObservableRecipient, INavigationAware
     private readonly IShopService _shopService;
     private const int ChartPointCount = 20;
 
-    [ObservableProperty]
-    private LiveChartPack dayIncomeChart;
-    [ObservableProperty]
-    private LiveChartPack weekIncomeChart;
+    //TODO: make these constant to avoid bug
+    public IncomeLiveChartPack DayIncomeChart = new("Day Income");
+    public IncomeLiveChartPack WeekIncomeChart = new("Week Income");
+    public IncomeLiveChartPack MonthIncomeChart = new("Month Income");
+    public IncomeLiveChartPack YearIncomeChart = new("Year Income");
     public ObservableCollection<ProductSoldCount> WeekTopProductsSoldCounts { get; } = new ObservableCollection<ProductSoldCount>();
     public ObservableCollection<ProductSoldCount> MonthTopProductsSoldCounts { get; } = new ObservableCollection<ProductSoldCount>();
     public ObservableCollection<ProductSoldCount> YearTopProductsSoldCounts { get; } = new ObservableCollection<ProductSoldCount>();
@@ -41,16 +42,32 @@ public partial class DashboardViewModel : ObservableRecipient, INavigationAware
         SyncTopProductOutOfStock();
         SyncTopProductSoldCount();
         SyncDayIncomeChart();
+        SyncWeekIncomeChart();
+        SyncMonthIncomeChart();
+        SyncYearIncomeChart();
+    }
+
+    private async void SyncYearIncomeChart()
+    {
+        var data = await _shopService.OrderService.GetIncomeByYear(ChartPointCount);
+        YearIncomeChart.SyncYearIncomeChart(data);
+    }
+    private async void SyncMonthIncomeChart()
+    {
+        var data = await _shopService.OrderService.GetIncomeByMonth(ChartPointCount);
+        MonthIncomeChart.SyncMonthIncomeChart(data);
+    }
+
+    private async void SyncWeekIncomeChart()
+    {
+        var data = await _shopService.OrderService.GetIncomeByWeek(ChartPointCount);
+        WeekIncomeChart.SyncWeekIncomeChart(data);
     }
 
     private async void SyncDayIncomeChart()
     {
         var data = await _shopService.OrderService.GetIncomeByDay(ChartPointCount);
-        DayIncomeChart = new LiveChartPack(data);
-        foreach (var s in DayIncomeChart.Series)
-        {
-            Debug.WriteLine(s);
-        }
+        DayIncomeChart.SyncDayIncomeChart(data);
     }
     
     private void SyncTopProductSoldCount()
@@ -63,7 +80,7 @@ public partial class DashboardViewModel : ObservableRecipient, INavigationAware
 
     private async void SyncYearTopProductSoldCount()
     {
-        var data = await _shopService.OrderService.GetThisYearProductSoldCountAsync();
+        var data = await _shopService.OrderService.GetThisYearProductSoldCountAsync(3);
 
         YearTopProductsSoldCounts.Clear();
 
@@ -74,7 +91,7 @@ public partial class DashboardViewModel : ObservableRecipient, INavigationAware
     }
     private async void SyncMonthTopProductSoldCount()
     {
-        var data = await _shopService.OrderService.GetThisMonthProductSoldCountAsync();
+        var data = await _shopService.OrderService.GetThisMonthProductSoldCountAsync(3);
 
         MonthTopProductsSoldCounts.Clear();
         foreach (var item in data)
@@ -85,7 +102,7 @@ public partial class DashboardViewModel : ObservableRecipient, INavigationAware
 
     private async void SyncWeekTopProductSoldCount()
     {
-        var data = await _shopService.OrderService.GetThisWeekProductSoldCountAsync();
+        var data = await _shopService.OrderService.GetThisWeekProductSoldCountAsync(3);
 
         WeekTopProductsSoldCounts.Clear();
         foreach (var item in data)

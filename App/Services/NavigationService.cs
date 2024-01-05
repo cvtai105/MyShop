@@ -1,4 +1,6 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Configuration;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 using App.Contracts.Services;
 using App.Contracts.ViewModels;
@@ -94,6 +96,18 @@ public class NavigationService : INavigationService
                 if (vmBeforeNavigation is INavigationAware navigationAware)
                 {
                     navigationAware.OnNavigatedFrom();
+                    var configFile = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+                    var settings = configFile.AppSettings.Settings;
+                    if (settings["LastPage"] == null)
+                    {
+                        settings.Add(pageKey, pageKey);
+                    }
+                    else
+                    {
+                        settings["LastPage"].Value = pageKey;
+                    }
+                    configFile.Save(ConfigurationSaveMode.Modified);
+                    ConfigurationManager.RefreshSection(configFile.AppSettings.SectionInformation.Name);
                 }
             }
 

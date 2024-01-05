@@ -40,6 +40,7 @@ public partial class ProductViewModel : ObservableRecipient, INavigationAware
 
     [NotifyCanExecuteChangedFor(nameof(ProductDeleteCommand))]
     [NotifyCanExecuteChangedFor(nameof(ProductEditCommand))]
+    [NotifyCanExecuteChangedFor(nameof(ShowStatisticsCommand))]
     [ObservableProperty] 
     private Product? selectedProduct;
     public ObservableCollection<Category> CategoryList { get; } = new();
@@ -98,6 +99,12 @@ public partial class ProductViewModel : ObservableRecipient, INavigationAware
         TotalPageCount = (TotalProductCount - 1) / PageSize + 1;
     }
 
+    [RelayCommand(CanExecute = nameof(CanDeleteProduct))]
+    private void ShowStatistics()
+    {
+        
+    }
+
     [RelayCommand(CanExecute = nameof(CanDescreasePage))]
     private void PreviousPageClick()
     {
@@ -131,6 +138,7 @@ public partial class ProductViewModel : ObservableRecipient, INavigationAware
         var result = await dialog.ShowAsync();
         if (result == ContentDialogResult.Primary)
         {
+            //TODO: create clone method
             product.Name = dialog.EdittingProduct.Name;
             product.SalePrice = dialog.EdittingProduct.SalePrice;
             product.ImportPrice = dialog.EdittingProduct.ImportPrice;
@@ -270,4 +278,5 @@ public partial class ProductViewModel : ObservableRecipient, INavigationAware
     {
     }
 
+   
 }

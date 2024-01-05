@@ -18,7 +18,7 @@ public sealed partial class OrderEditDialog : ContentDialog
     {
         InitializeComponent();
         ViewModel = App.GetService<OrderEditViewModel>();
-        ViewModel.InitializeProperties(editting);
+        _ = ViewModel.InitializeProperties(editting);
     }
 
     public void OnSearchTextChanged(object sender, TextChangedEventArgs e)

@@ -19,9 +19,9 @@ public interface IOrderService
     Task<int> GetCurrentWeekOrderCountAsync();
     Task<int> GetCurrentMonthOrderCountAsync();
 
-    Task<IEnumerable<ProductSoldCount>> GetThisWeekProductSoldCountAsync();
-    Task<IEnumerable<ProductSoldCount>> GetThisYearProductSoldCountAsync();
-    Task<IEnumerable<ProductSoldCount>> GetThisMonthProductSoldCountAsync();
+    Task<IEnumerable<ProductSoldCount>> GetThisWeekProductSoldCountAsync(int n);
+    Task<IEnumerable<ProductSoldCount>> GetThisYearProductSoldCountAsync(int n);
+    Task<IEnumerable<ProductSoldCount>> GetThisMonthProductSoldCountAsync(int n);
 
     /// <param name="count"> number of lastest day income will be include to the result </param>
     Task<IEnumerable<DayIncome>> GetIncomeByDay(int count);
@@ -37,10 +37,12 @@ public interface IOrderService
 
 
     // get total quantity of a product saled
-    Task<int> GetQuantiyProductSaled(int productId);
     Task<int> GetTotalOrderCount(DateTimeOffset? startDate, DateTimeOffset? endDate);
 
     // get orders by date, pagesize, page
     Task<IEnumerable<Order>> QueryOrderPage(DateTimeOffset? startDate, DateTimeOffset? endDate, int pageSize, int? selectedPage);
-   
+    Task<IEnumerable<ProductSoldCountDay>> GetProductSoldCountByDay(int productId);
+    Task<IEnumerable<ProductSoldCountWeek>> GetProductSoldCountByWeek(int productId);
+    Task<IEnumerable<ProductSoldCountMonth>> GetProductSoldCountByMonth(int productId);
+    Task<IEnumerable<ProductSoldCountYear>> GetProductSoldCountByYear(int productId);
 }

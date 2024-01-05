@@ -48,9 +48,7 @@
                 <RowDefinition Height="Auto"/>
 			</Grid.RowDefinitions>
 
-
-			<!-- Phần trên -->
-			<Grid Grid.Row="3">
+			<Grid Grid.Row="0">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="*"/>
 					<ColumnDefinition Width="*"/>
@@ -76,7 +74,7 @@
 
 
 
-            <StackPanel Grid.Row="2" Padding="0 20 0 0 ">
+            <StackPanel Grid.Row="3" Padding="0 20 0 0 ">
 				<TextBlock Text="Top Five Out of Stock" Style="{StaticResource SubtitleTextBlockStyle}"/>
 
 				<Grid x:Name="TopFive">
@@ -105,20 +103,25 @@
 					</controls:DataGrid>
 				</Grid>
 			</StackPanel>
-            <ScrollViewer Grid.Row="0" Height="Auto">
-            <Grid  Name="ChartSection" >
+            <Grid  Name="ChartSection" Grid.Row="2">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
-                <Grid Name="DayIncomeSection" DataContext="{x:Bind ViewModel.DayIncomeChart}">
+                <Grid Grid.Row="0">
+                    <TextBlock Text="Revenue and Profit Stastics" Style="{StaticResource SubtitleTextBlockStyle}"/>
+                </Grid>
+                <Grid Name="DayIncomeSection" Grid.Row="1" DataContext="{x:Bind ViewModel.DayIncomeChart}">
                     <lvc:CartesianChart  
                         PointerEntered="OnChartPointerEnter"
                         PointerExited="OnChartPointerExit"
                         VerticalAlignment="Center"
-                        Height="400" Width="1200" XAxes="{Binding XAxes}" 
-                        Series="{Binding Series}" Title="{Binding Title}" 
+                        Height="400" Width="1200" 
+                        XAxes="{Binding XAxes}" 
+                        YAxes="{Binding YAxes}"
+                        Series="{Binding Series}" 
                         ZoomMode="X"
                         LegendPosition="Right"
                         LegendTextPaint="{Binding LegendTextPaint}"
@@ -126,13 +129,15 @@
                         LegendTextSize="16">
                     </lvc:CartesianChart>
                 </Grid>
-                <Grid  Name="WeekIncomeSection" Grid.Row="1" DataContext="{x:Bind ViewModel.WeekIncomeChart}">
+                <Grid  Name="WeekIncomeSection" Grid.Row="2" DataContext="{x:Bind ViewModel.WeekIncomeChart}">
                     <lvc:CartesianChart  
                         PointerEntered="OnChartPointerEnter"
                         PointerExited="OnChartPointerExit"
                         VerticalAlignment="Center"
-                        Height="400" Width="1200" XAxes="{Binding XAxes}" 
-                        Series="{Binding Series}" Title="{Binding Title}" 
+                        Height="400" Width="1200"
+                        XAxes="{Binding XAxes}" 
+                        YAxes="{Binding YAxes}"
+                        Series="{Binding Series}" 
                         ZoomMode="X"
                         LegendPosition="Right"
                         LegendTextPaint="{Binding LegendTextPaint}"
@@ -140,9 +145,45 @@
                         LegendTextSize="16">            
                     </lvc:CartesianChart>
                 </Grid>
-                
+                <Grid Grid.Row="3">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Grid Name="MonthIncomeSection" DataContext="{x:Bind ViewModel.MonthIncomeChart}">
+                        <lvc:CartesianChart  
+                            PointerEntered="OnChartPointerEnter"
+                            PointerExited="OnChartPointerExit"
+                            VerticalAlignment="Center"
+                            Height="400" Width="800"
+                            XAxes="{Binding XAxes}" 
+                            YAxes="{Binding YAxes}"
+                            Series="{Binding Series}" 
+                            ZoomMode="X"
+                            LegendPosition="Right"
+                            LegendTextPaint="{Binding LegendTextPaint}"
+                            LegendBackgroundPaint="{Binding LedgendBackgroundPaint}"
+                            LegendTextSize="16"/>
+                    </Grid>
+                    <Grid Name="YearIncomeSection" Grid.Column="1" DataContext="{x:Bind ViewModel.YearIncomeChart}">
+                        <lvc:CartesianChart  
+                            PointerEntered="OnChartPointerEnter"
+                            PointerExited="OnChartPointerExit"
+                            VerticalAlignment="Center"
+                            Height="400" Width="400"
+                            XAxes="{Binding XAxes}" 
+                            YAxes="{Binding YAxes}"
+                            Series="{Binding Series}" 
+                            ZoomMode="X"
+                            LegendPosition="Right"
+                            LegendTextPaint="{Binding LegendTextPaint}"
+                            LegendBackgroundPaint="{Binding LedgendBackgroundPaint}"
+                            LegendTextSize="16"/>       
+                    </Grid>
+                </Grid>
+
             </Grid>
-            </ScrollViewer>
             
 
             <Grid Grid.Row="1" Name="TopSellingSection" Margin="0 16 0 0">
